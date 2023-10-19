@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.webyappsluna.xtrajob'
+    namespace 'com.droidper.xtrajob'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.webyappsluna.xtrajob"
+        applicationId "com.droidper.xtrajob"
         minSdk 26
         targetSdk 33
         versionCode 1
@@ -64,4 +64,9 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+    //Icons MAterial Designe
+    // Icons
+    implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
+    //ConstraintLayout
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 }
