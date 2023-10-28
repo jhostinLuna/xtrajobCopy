@@ -1,11 +1,15 @@
-package com.droidper.xtrajob.feature.desingn
+package com.droidper.xtrajob.core.desingn
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +23,7 @@ import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,31 +32,87 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.droidper.xtrajob.ui.theme.GreenActive
-import com.droidper.xtrajob.ui.theme.Green_80
-import com.droidper.xtrajob.ui.theme.OrangeRegister
+import com.droidper.xtrajob.core.extensions.bottomBorder
+import com.droidper.xtrajob.ui.theme.AppTheme
 import java.time.LocalDate
 
-val brush = Brush.verticalGradient(listOf(GreenActive,Color.White))
+@Preview(
+    device = Devices.PIXEL_4_XL,
+    showBackground = true,
+    uiMode = UI_MODE_NIGHT_NO,
+    name = "CardsPreviewLight",
+)
+@Preview(
+    device = Devices.PIXEL_3A,
+    showBackground = true,
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "CardsPreviewNight",
+)
 @Composable
-fun CardWorkingDay(){
+fun CardsPreview() {
+    AppTheme {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CardWorkingDay(
+                hoursDay = listOf("6:00","16:00"),
+                hoursBrakingWork = listOf("12:00","13:00"),
+                day = "LUNES",
+            ){
+
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            CardDayHoursMoney(
+                date = LocalDate.now(),
+                hoursDay = "8h",
+                money = "55€"
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            CardMonth(
+                age = "2023",
+                hours = "8h",
+                month = "Diciembre",
+                money = "35€",
+                onclick = {}
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            HeaderListDaysRecorded()
+            CardDayRecorded(date = LocalDate.now(), hoursDay = listOf("6:00","16:00"), hoursBrakingWork = listOf("12:00","13:00"))
+            CardDayRecorded(date = LocalDate.now(), hoursDay = listOf("6:00","16:00"), hoursBrakingWork = listOf("12:00","13:00"))
+        }
+
+    }
+
+}
+@Composable
+fun CardWorkingDay(
+    hoursDay: List<String>,
+    hoursBrakingWork: List<String>,
+    day: String,
+    important: Boolean = false,
+    onclick: () -> Unit
+){
     Card(
         modifier = Modifier
             .width(236.dp)
-            .height(124.dp),
-        shape = RoundedCornerShape(4.dp)
+            .height(124.dp)
+            .clickable { onclick() },
+        shape = RoundedCornerShape(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (important) MaterialTheme.colorScheme.secondaryContainer
+        else MaterialTheme.colorScheme.surfaceVariant
+        )
     ) {
         Box (
             modifier = Modifier
                 .fillMaxSize()
-                .background(brush)
                 ) {
             Row(
                 modifier = Modifier
@@ -59,23 +120,26 @@ fun CardWorkingDay(){
                     .fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                ColumnHourWithIcon(hours = listOf("6:00")){
+                ColumnHourWithIcon(hours = listOf(hoursDay[0])){
                     Icon(imageVector = Icons.Filled.PlayCircle, contentDescription = "Icon of play or start")
                 }
-                ColumnHourWithIcon(hours = listOf("11:00","12:00")){
-                    Icon(imageVector = Icons.Filled.PauseCircle, contentDescription = "Icon of play or start")
+
+
+                ColumnHourWithIcon(hours = hoursBrakingWork){
+                    Icon(imageVector = Icons.Filled.PauseCircle, contentDescription = "Icon of pause")
                 }
-                ColumnHourWithIcon(hours = listOf("16:00")) {
-                    Icon(imageVector = Icons.Filled.StopCircle, contentDescription = "Icon of play or start")
+                ColumnHourWithIcon(hours = listOf(hoursDay[1])) {
+                    Icon(imageVector = Icons.Filled.StopCircle, contentDescription = "Icon of stop")
                 }
+
+
             }
             Text(
                 modifier = Modifier
                     .padding(start = 15.dp, bottom = 12.dp)
                     .align(Alignment.BottomStart),
-                text = "LUNES",
+                text = day,
                 style = MaterialTheme.typography.bodyMedium,
-                color = OrangeRegister
             )
         }
     }
@@ -101,62 +165,58 @@ fun ColumnHourWithIcon(
     }
 }
 @Composable
-fun WorkBreak(hours:List<String>){
+fun WorkBreak(
+    modifier: Modifier = Modifier,
+    hours: List<String>) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .height(55.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
-        if (hours.size > 1) {
-            Text(
-                text = hours[0],
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Divider(
-                modifier = Modifier
-                    .height(14.dp)
-                    .width(2.dp),
-                color = Color.Black
-            )
-            Text(
-                text = hours[1],
-                style = MaterialTheme.typography.bodyMedium
+        when (hours.size) {
+            1 -> {
+                Text(
+                    text = hours[0],
+                    style = MaterialTheme.typography.bodyMedium
                 )
-        } else {
-            Text(
-                text = hours[0],
-                style = MaterialTheme.typography.bodyMedium
-            )
+            }
+            else -> {
+                Text(
+                    text = hours[0],
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Divider(
+                    modifier = Modifier
+                        .height(14.dp)
+                        .width(2.dp),
+                )
+                Text(
+                    text = hours[1],
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
+
     }
+
 }
-@Preview(
-    heightDp = 300,
-    widthDp = 300,
-    showBackground = true
-)
-@Composable
-fun CardWorkingDayPreview() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CardWorkingDay()
-    }
-}
+
+
 /***************************Recorded Card Day **********************************/
-@Preview
+
 @Composable
-fun CardRecordedDayPreview() {
-    CardRecordedDay(LocalDate.now())
-}
-@Composable
-fun CardRecordedDay(date: LocalDate) {
+fun CardDayHoursMoney(
+    date: LocalDate,
+    hoursDay: String,
+    money: String
+) {
     Card(
         modifier = Modifier
             .width(100.dp)
             .height(85.dp),
         shape = RoundedCornerShape(4.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(
             modifier = Modifier
@@ -184,15 +244,20 @@ fun CardRecordedDay(date: LocalDate) {
             ) {
                 ColumnIconWithHour(
                     icon = {
-                        Icon(imageVector = Icons.Filled.Construction, contentDescription = "Icon Work")
+                        Icon(
+                            imageVector = Icons.Filled.Construction,
+                            contentDescription = "Icon Work"
+                        )
                     },
-                    quantity = "8h"
+                    quantity = hoursDay
                 )
                 ColumnIconWithHour(
                     icon = {
-                        Icon(imageVector = Icons.Filled.Euro, contentDescription = "Icon Work")
+                        Icon(imageVector = Icons.Filled.Euro,
+                            contentDescription = "Icon Work"
+                        )
                     },
-                    quantity = "35€"
+                    quantity = money
                 )
             }
 
@@ -201,13 +266,17 @@ fun CardRecordedDay(date: LocalDate) {
     }
 }
 @Composable
-fun IconDay(day: String) {
+fun IconDay(
+    day: String,
+) {
     Surface(
         modifier = Modifier
             .width(21.dp)
             .height(21.dp),
         shape = RoundedCornerShape(4.dp),
-        color = OrangeRegister
+        color = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        shadowElevation = 4.dp
     ) {
         Text(
             modifier = Modifier,
@@ -234,7 +303,6 @@ fun ColumnIconWithHour(
             modifier = Modifier,
             content = icon,
             color = Color.White.copy(0f),
-            contentColor = Color.DarkGray
         )
         Text(
             text = quantity,
@@ -245,17 +313,16 @@ fun ColumnIconWithHour(
     }
 }
 /************************************* Card Month ****************************/
-@Preview
-@Composable
-fun CardMonthPreview(){
-    CardMonth(age = "2023", hours = "8h", money = "")
-}
+
 @Composable
 fun CardMonth(
     age: String,
     hours: String,
-    money: String
+    month: String,
+    money: String,
+    onclick: () -> Unit
 ) {
+
     Column(
         modifier = Modifier
             .width(100.dp)
@@ -263,11 +330,12 @@ fun CardMonth(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = "2023")
+        Text(text = age)
         Card(
             modifier = Modifier
                 .height(100.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable { onclick() },
             shape = RoundedCornerShape(4.dp)
         ) {
             Column(
@@ -279,11 +347,11 @@ fun CardMonth(
                     modifier = Modifier
                         .height(31.dp)
                         .fillMaxWidth()
-                        .background(color = Green_80),
+                        .background(color = MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
                 ){
                     Text(
-                        text = "Diciembre",
+                        text = month,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyMedium
@@ -301,7 +369,7 @@ fun CardMonth(
                                 imageVector = Icons.Filled.Construction,
                                 contentDescription = "Icon of construction"
                             ) },
-                        quantity = "8h"
+                        quantity = hours
                     )
                     ColumnIconWithHour(
                         icon = {
@@ -309,7 +377,7 @@ fun CardMonth(
                                 imageVector = Icons.Filled.Euro,
                                 contentDescription = "Icon of construction"
                             ) },
-                        quantity = "35€"
+                        quantity = money
                     )
                 }
 
@@ -318,4 +386,58 @@ fun CardMonth(
 
         }
     }
+}
+/*****************************Card Days Recorded **************************************/
+@Composable
+fun CardDayRecorded(
+    modifier: Modifier = Modifier,
+    date: LocalDate,
+    hoursDay: List<String>,
+    hoursBrakingWork: List<String>
+) {
+    Surface {
+        Row(
+            modifier = modifier
+                .defaultMinSize(minWidth = 266.dp)
+                .height(61.dp)
+                .bottomBorder(2.dp, MaterialTheme.colorScheme.surfaceVariant),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier
+                    .weight(15f),
+                text = "10",
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                textAlign = TextAlign.Center
+            )
+            Box(
+                modifier = Modifier.weight(15f),
+                contentAlignment = Alignment.Center
+            ){
+                IconDay(day = "D")
+            }
+
+            Text(
+                modifier = Modifier.weight(33.3f),
+                text = hoursDay[0],
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                textAlign = TextAlign.Center
+
+            )
+            WorkBreak(
+                modifier = Modifier
+                    .weight(33.3f),
+                hours = hoursBrakingWork)
+            Text(
+                modifier = Modifier.weight(33.3f),
+                text = hoursDay[1],
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+
 }
