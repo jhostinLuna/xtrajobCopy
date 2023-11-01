@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.droidper.xtrajob.core.navigation.Screen
 import com.droidper.xtrajob.feature.home.HomeScreen
+import com.droidper.xtrajob.feature.newworkday.NewDayScreen
 import com.droidper.xtrajob.feature.recorddays.RecordDaysScreen
 import com.droidper.xtrajob.feature.workcalendar.WorkCalendarScreen
 import com.droidper.xtrajob.ui.theme.AppTheme
@@ -23,12 +24,12 @@ import com.droidper.xtrajob.ui.theme.AppTheme
 @Composable
 fun HomeScreenPreview(){
     AppTheme {
-        ScaffoldWithGraph()
+        XtraJobComposeApp()
     }
 }
 
 @Composable
-fun ScaffoldWithGraph (
+fun XtraJobComposeApp (
     navHostController: NavHostController = rememberNavController()
 ) {
     NavHost(
@@ -44,7 +45,7 @@ fun ScaffoldWithGraph (
         }
         composable(route = Screen.Calendar.route) {
             WorkCalendarScreen(
-                navToNewDay = {},
+                navToNewDay = { navHostController.navigate(Screen.NewDay.route)},
                 navToBack = {}
             )
         }
@@ -52,8 +53,13 @@ fun ScaffoldWithGraph (
             HomeScreen(
                 navigateToCalendarScreen = { navHostController.navigate(Screen.Calendar.route) },
                 navigateToLogin = { /*TODO*/ },
-                navigateToRecordDayScreen = {}
+                navigateToRecordDayScreen = { navHostController.navigate(Screen.RecordDays.route) }
             )
+        }
+        composable(route = Screen.NewDay.route) {
+            NewDayScreen {
+
+            }
         }
     }
 }

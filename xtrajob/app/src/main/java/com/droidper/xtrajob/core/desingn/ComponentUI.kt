@@ -133,34 +133,14 @@ fun HeaderHome(
                 },
                 textAlign = TextAlign.Center
             )
-            Row(
-                modifier = Modifier
-                    .constrainAs(hour) {
-                        top.linkTo(welcome.bottom, margin = 30.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                    },
-                verticalAlignment = Alignment.CenterVertically
-
-            ) {
-                BoxHour(hour = "08")
-                Spacer(
-                    modifier = Modifier
-                        .width(30.dp)
-                )
-                Column {
-                    PointWhite()
-                    Spacer(
-                        modifier = Modifier
-                            .height(20.dp))
-                    PointWhite()
-                }
-                Spacer(
-                    modifier = Modifier
-                        .width(30.dp)
-                )
-                BoxHour(hour = "00")
-            }
+            RowHourMinute(modifier = Modifier
+                .constrainAs(hour) {
+                    top.linkTo(welcome.bottom, margin = 30.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                },
+                hour = "08",
+                minute = "00")
             ButtonM(
                 modifier = Modifier
                     .constrainAs(buttonRegister){
@@ -209,6 +189,37 @@ fun HeaderHome(
 
 }
 @Composable
+fun RowHourMinute(
+    modifier: Modifier,
+    hour: String,
+    minute: String
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+
+    ) {
+        BoxHour(number = hour)
+        Spacer(
+            modifier = Modifier
+                .width(30.dp)
+        )
+        Column {
+            PointWhite()
+            Spacer(
+                modifier = Modifier
+                    .height(20.dp))
+            PointWhite()
+        }
+        Spacer(
+            modifier = Modifier
+                .width(30.dp)
+        )
+        BoxHour(number = minute)
+    }
+}
+@Composable
 fun PointWhite() {
     val color = MaterialTheme.colorScheme.background
     Canvas(
@@ -219,7 +230,7 @@ fun PointWhite() {
         })
 }
 @Composable
-fun BoxHour(hour: String) {
+fun BoxHour(number: String) {
     val color = MaterialTheme.colorScheme.background
     Surface(
         modifier = Modifier
@@ -236,7 +247,7 @@ fun BoxHour(hour: String) {
             Text(
                 modifier = Modifier
                     .align(Alignment.Center),
-                text = hour,
+                text = number,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
                 style = MaterialTheme.typography.headlineLarge,

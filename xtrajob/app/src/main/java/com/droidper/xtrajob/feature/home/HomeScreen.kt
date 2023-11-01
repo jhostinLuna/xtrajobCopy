@@ -5,10 +5,8 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -16,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -87,31 +86,18 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(
-                modifier = Modifier
-                    .height(60.dp)
-            )
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 40.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    style = MaterialTheme.typography.titleMedium,
-                    text = stringResource(id = R.string.title_home_1))
-                TextButton(onClick = navigateToCalendarScreen) {
-                    Text(
-                        text = stringResource(id = R.string.ver_mas),
-                        textDecoration = TextDecoration.Underline,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+
+            RowTitleWithContent(
+                title = stringResource(id = R.string.title_home_1),
+                contentRight = {
+                    TextButton(onClick = navigateToCalendarScreen) {
+                        Text(
+                            text = stringResource(id = R.string.ver_mas),
+                            textDecoration = TextDecoration.Underline,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
-            }
-            Spacer(
-                modifier = Modifier
-                    .height(25.dp)
             )
             LazyRow(
                 modifier = Modifier
@@ -123,7 +109,9 @@ fun HomeScreen(
                     }
                 }
             }
-            TitleWithSpacer(title = stringResource(id = R.string.title_home_2), topSpacer = 60.dp, bottomSpacer = 25.dp)
+            RowTitleWithContent(title = stringResource(id = R.string.title_home_2), topSpacer = 60.dp, bottomSpacer = 25.dp) {
+
+            }
             LazyRow(
                 modifier = Modifier
                     .padding(horizontal = 40.dp)
@@ -132,14 +120,16 @@ fun HomeScreen(
                     CardDayHoursMoney(date = LocalDate.now(), hoursDay = "9h", money = "70€")
                 }
             }
-            TitleWithSpacer(title = stringResource(id = R.string.title_home_3), topSpacer = 60.dp, bottomSpacer = 25.dp)
+            RowTitleWithContent(title = stringResource(id = R.string.title_home_3), topSpacer = 60.dp, bottomSpacer = 25.dp) {
+
+            }
             LazyRow(
                 modifier = Modifier
                     .padding(horizontal = 40.dp)
             ) {
                 items(items = listOf("")) {
                     CardMonth(age = "2023", hours = "200", month = "Diciembre", money = "1500€") {
-
+                        navigateToRecordDayScreen()
                     }
                 }
             }
@@ -150,22 +140,33 @@ fun HomeScreen(
 
 }
 @Composable
-fun TitleWithSpacer(
+fun RowTitleWithContent(
+    modifier: Modifier = Modifier,
     title: String,
-    topSpacer: Dp,
-    bottomSpacer: Dp
+    topSpacer: Dp = 0.dp,
+    bottomSpacer: Dp = 0.dp,
+    contentRight: @Composable () -> Unit
 ){
-    Spacer(
-        modifier = Modifier
-            .height(topSpacer)
-    )
-    Text(
-        modifier = Modifier
-            .padding(horizontal = 40.dp)
+
+    Row(
+        modifier = modifier
+            .padding(top = topSpacer,
+                bottom = bottomSpacer,
+                start = 40.dp,
+                end = 40.dp)
             .fillMaxWidth(),
-        style = MaterialTheme.typography.titleMedium,
-        text = title)
-    Spacer(
-        modifier = Modifier
-            .height(bottomSpacer))
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Text(
+            modifier = Modifier,
+            style = MaterialTheme.typography.titleMedium,
+            text = title)
+        Surface(
+            modifier = Modifier,
+            content = contentRight,
+        )
+    }
+
 }
