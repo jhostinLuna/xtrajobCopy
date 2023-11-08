@@ -3,6 +3,7 @@ package com.droidper.xtrajob.feature.newworkday
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidper.xtrajob.R
+import com.droidper.xtrajob.core.desingn.DialogTimePicker
 import com.droidper.xtrajob.core.desingn.RowHourMinute
 import com.droidper.xtrajob.core.desingn.TopAppBarBasic
 import com.droidper.xtrajob.feature.home.RowTitleWithContent
@@ -61,10 +65,16 @@ fun NewDayScreenPreview(){
     }
 
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewDayScreen(
     onPressBack: () -> Unit
 ){
+    var showTimePicker by remember {
+        mutableStateOf(false)
+    }
+    val startTimepickerState = rememberTimePickerState()
+    val endTimePickerState = rememberTimePickerState()
     Scaffold(
         topBar = {
             TopAppBarBasic(
@@ -91,6 +101,7 @@ fun NewDayScreen(
             }
         }
     ) {innerPaddingValue->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -103,16 +114,18 @@ fun NewDayScreen(
             Surface(
                 modifier = Modifier
                     .width(262.dp)
-                    .height(134.dp),
+                    .height(134.dp)
+                    .clickable { showTimePicker = true },
                 shape = RoundedCornerShape(4.dp),
                 color = MaterialTheme.colorScheme.inversePrimary,
                 shadowElevation = 4.dp
             ) {
+
                 RowHourMinute(
                     modifier = Modifier
                         .fillMaxSize(),
-                    hour = "08",
-                    minute = "00"
+                    hour = startTimepickerState.hour.toString(),
+                    minute = startTimepickerState.minute.toString()
                 )
             }
             Spacer(modifier = Modifier.height(50.dp))
@@ -130,8 +143,8 @@ fun NewDayScreen(
                 RowHourMinute(
                     modifier = Modifier
                         .fillMaxSize(),
-                    hour = "08",
-                    minute = "00"
+                    hour = endTimePickerState.hour.toString(),
+                    minute = endTimePickerState.minute.toString()
                 )
 
             }
@@ -175,4 +188,9 @@ fun NewDayScreen(
             )
         }
     }
+
+    DialogTimePicker(
+        timepickerState = startTimepickerState,
+        show = showTimePicker )
+
 }

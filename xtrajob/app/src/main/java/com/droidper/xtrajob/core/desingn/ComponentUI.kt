@@ -25,12 +25,17 @@ import androidx.compose.material.icons.filled.DoNotDisturbOn
 import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.StopCircle
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.droidper.xtrajob.R
 import com.droidper.xtrajob.ui.theme.AppTheme
@@ -303,4 +309,38 @@ fun HeaderListDaysRecorded(
         }
     }
 
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DialogTimePicker(
+    timepickerState: TimePickerState,
+    show: Boolean = false
+) {
+    if (show) {
+
+            AlertDialog(
+                onDismissRequest = { /*TODO*/ },
+                properties = DialogProperties(dismissOnBackPress = true,dismissOnClickOutside = true)
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(600.dp)
+                        .padding(vertical = 12.dp),
+                    color = Color.White
+                ){
+                    TimePicker(state = timepickerState )
+                }
+            }
+
+    }
+
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(
+    device = Devices.PIXEL_3A
+)
+@Composable
+fun DialogTimePickerPreview () {
+    DialogTimePicker(timepickerState = rememberTimePickerState(),true)
 }
