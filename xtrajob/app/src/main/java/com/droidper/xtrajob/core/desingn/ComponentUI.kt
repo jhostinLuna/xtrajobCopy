@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -314,24 +315,39 @@ fun HeaderListDaysRecorded(
 @Composable
 fun DialogTimePicker(
     timepickerState: TimePickerState,
-    show: Boolean = false
+    show: Boolean = false,
+    onDismiss: () -> Unit,
+    onClickAccept: () -> Unit
 ) {
     if (show) {
-
+            /*
             AlertDialog(
                 onDismissRequest = { /*TODO*/ },
                 properties = DialogProperties(dismissOnBackPress = true,dismissOnClickOutside = true)
             ) {
+
+            }
+
+             */
+        AlertDialog(
+            title = { Text(text = stringResource(id = R.string.select_hour))},
+            text = {
                 Surface(
                     modifier = Modifier
-                        .width(300.dp)
-                        .height(600.dp)
+                        .fillMaxSize()
                         .padding(vertical = 12.dp),
-                    color = Color.White
                 ){
                     TimePicker(state = timepickerState )
                 }
-            }
+            },
+            properties = DialogProperties(dismissOnBackPress = true,dismissOnClickOutside = true),
+            onDismissRequest = onDismiss,
+            confirmButton = { 
+                Button(onClick = onClickAccept) {
+                    Text(text = stringResource(id = R.string.acept))
+                }
+            },
+        )
 
     }
 
@@ -342,5 +358,10 @@ fun DialogTimePicker(
 )
 @Composable
 fun DialogTimePickerPreview () {
-    DialogTimePicker(timepickerState = rememberTimePickerState(),true)
+    DialogTimePicker(
+        timepickerState = rememberTimePickerState(),
+        show = true,
+        onClickAccept = {},
+        onDismiss = {}
+    )
 }

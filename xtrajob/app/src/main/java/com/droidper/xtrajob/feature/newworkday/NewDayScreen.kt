@@ -70,9 +70,7 @@ fun NewDayScreenPreview(){
 fun NewDayScreen(
     onPressBack: () -> Unit
 ){
-    var showTimePicker by remember {
-        mutableStateOf(false)
-    }
+
     val startTimepickerState = rememberTimePickerState()
     val endTimePickerState = rememberTimePickerState()
     Scaffold(
@@ -111,24 +109,45 @@ fun NewDayScreen(
             RowTitleWithContent(title = stringResource(id = R.string.newday_title1), topSpacer = 10.dp, bottomSpacer = 10.dp) {
 
             }
+            // Hora Inicio
+
             Surface(
                 modifier = Modifier
                     .width(262.dp)
-                    .height(134.dp)
-                    .clickable { showTimePicker = true },
+                    .height(134.dp),
                 shape = RoundedCornerShape(4.dp),
                 color = MaterialTheme.colorScheme.inversePrimary,
                 shadowElevation = 4.dp
             ) {
-
+                var showTimePicker by remember {
+                    mutableStateOf(false)
+                }
+                var hourInit by remember {
+                    mutableStateOf("00")
+                }
+                var minInit by remember {
+                    mutableStateOf("00")
+                }
                 RowHourMinute(
                     modifier = Modifier
-                        .fillMaxSize(),
-                    hour = startTimepickerState.hour.toString(),
-                    minute = startTimepickerState.minute.toString()
+                        .fillMaxSize()
+                        .clickable { showTimePicker = true },
+                    hour = hourInit,
+                    minute =minInit
+                )
+                DialogTimePicker(
+                    timepickerState = startTimepickerState,
+                    show = showTimePicker,
+                    onClickAccept = {
+                        hourInit = String.format("%02d",startTimepickerState.hour)
+                        minInit = String.format("%02d",startTimepickerState.minute)
+                        showTimePicker = false},
+                    onDismiss = {showTimePicker = false}
                 )
             }
             Spacer(modifier = Modifier.height(50.dp))
+
+            //Hora Fin
             RowTitleWithContent(title = stringResource(id = R.string.newday_title2), topSpacer = 10.dp, bottomSpacer = 10.dp) {
 
             }
@@ -140,11 +159,30 @@ fun NewDayScreen(
                 color = MaterialTheme.colorScheme.tertiaryContainer,
                 shadowElevation = 4.dp
             ) {
+                var showTimePicker by remember {
+                    mutableStateOf(false)
+                }
+                var hourFin by remember {
+                    mutableStateOf("00")
+                }
+                var minFin by remember {
+                    mutableStateOf("00")
+                }
                 RowHourMinute(
                     modifier = Modifier
-                        .fillMaxSize(),
-                    hour = endTimePickerState.hour.toString(),
-                    minute = endTimePickerState.minute.toString()
+                        .fillMaxSize()
+                        .clickable { showTimePicker = true },
+                    hour = hourFin,
+                    minute = minFin
+                )
+                DialogTimePicker(
+                    timepickerState = endTimePickerState,
+                    show = showTimePicker,
+                    onClickAccept = {
+                        hourFin = String.format("%02d",endTimePickerState.hour)
+                        minFin = String.format("%02d",endTimePickerState.minute)
+                        showTimePicker = false},
+                    onDismiss = {showTimePicker = false}
                 )
 
             }
@@ -189,8 +227,6 @@ fun NewDayScreen(
         }
     }
 
-    DialogTimePicker(
-        timepickerState = startTimepickerState,
-        show = showTimePicker )
+
 
 }

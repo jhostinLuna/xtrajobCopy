@@ -15,4 +15,6 @@
     <string name="newday_title2">Hora fin</string>
     <string name="newday_title3">Descanso (descanso sin pago)</string>
     <string name="observations">Observaciones</string>
+    <string name="select_hour">Selecciona hora y minuto</string>
+    <string name="acept">Aceptar</string>
 </resources>
