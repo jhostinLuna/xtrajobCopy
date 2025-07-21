@@ -11,11 +11,12 @@ interface RecordDayDao {
     @Query("SELECT * FROM record_day")
     fun getAll(): List<RecordDay>
 
-
+    @Insert
+    fun saveRecordDay(record: RecordDay)
 
     @Insert
-    fun insertAll(vararg users: RecordDay)
+    fun insertAll(vararg record: RecordDay)
 
     @Delete
-    fun delete(user: RecordDay)
+    fun delete(record: RecordDay)
 }
