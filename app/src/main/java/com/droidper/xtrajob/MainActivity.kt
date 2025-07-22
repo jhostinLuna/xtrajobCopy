@@ -8,7 +8,7 @@ import com.droidper.xtrajob.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.  onCreate(savedInstanceState)
         setContent {
             AppTheme {
                 XtraJobComposeApp()

@@ -2,8 +2,8 @@ package com.droidper.xtrajob.core.di
 
 import android.content.Context
 import androidx.room.Room
-import com.droidper.xtrajob.repository.local.room.AppDatabase
-import com.droidper.xtrajob.repository.local.room.RecordDayDao
+import com.droidper.xtrajob.core.roomdatabase.AppDatabase
+import com.droidper.xtrajob.core.roomdatabase.RecordDayDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

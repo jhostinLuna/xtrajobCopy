@@ -1,4 +1,4 @@
-package com.droidper.xtrajob.model
+package com.droidper.xtrajob.core.roomdatabase
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

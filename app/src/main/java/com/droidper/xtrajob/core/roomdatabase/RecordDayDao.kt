@@ -1,10 +1,9 @@
-package com.droidper.xtrajob.repository.local.room
+package com.droidper.xtrajob.core.roomdatabase
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.droidper.xtrajob.model.RecordDay
 
 @Dao
 interface RecordDayDao {
