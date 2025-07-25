@@ -1,4 +1,4 @@
-package com.droidper.xtrajob.feature.newworkday
+package com.droidper.xtrajob.view.newworkday
 
 import androidx.lifecycle.ViewModel
 

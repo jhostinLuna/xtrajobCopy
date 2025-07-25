@@ -1,9 +1,12 @@
-package com.droidper.xtrajob.core.di
+package com.droidper.xtrajob.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.droidper.xtrajob.core.roomdatabase.AppDatabase
-import com.droidper.xtrajob.core.roomdatabase.RecordDayDao
+import com.droidper.xtrajob.frameworks.roomdatabase.AppDatabase
+import com.droidper.xtrajob.frameworks.roomdatabase.RecordDayDao
+import com.droidper.xtrajob.domain.RecordDayRepository
+import com.droidper.xtrajob.data.RecordDayRepositoryImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +23,7 @@ object DatabaseModule {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
-            "AppDatabase"
+            "Xtrajob_DB"
         ).build()
     }
 
@@ -29,4 +32,11 @@ object DatabaseModule {
     fun provideRecordDayDao(appDatabase: AppDatabase): RecordDayDao {
         return appDatabase.recordDayDao()
     }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class BindRepositoryModule{
+    @Binds
+    abstract fun getRecordDayRepository(recordDayRepositoryImpl: RecordDayRepositoryImpl): RecordDayRepository
 }

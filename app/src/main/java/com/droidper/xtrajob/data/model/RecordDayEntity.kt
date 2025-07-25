@@ -1,11 +1,11 @@
-package com.droidper.xtrajob.core.roomdatabase
+package com.droidper.xtrajob.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "record_day")
-data class RecordDay (
+data class RecordDayEntity (
     @PrimaryKey(autoGenerate = true) val uid: Int,
     @ColumnInfo(name = "start_day") val startDay: Long,
     @ColumnInfo(name = "end_day") val endDay:Long,

@@ -1,4 +1,4 @@
-package com.droidper.xtrajob.core.exception
+package com.droidper.xtrajob.core.common
 
 sealed class Failure {
     companion object {

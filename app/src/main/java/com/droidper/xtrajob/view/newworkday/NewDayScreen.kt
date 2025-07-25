@@ -1,4 +1,4 @@
-package com.droidper.xtrajob.feature.newworkday
+package com.droidper.xtrajob.view.newworkday
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -41,7 +41,7 @@ import com.droidper.xtrajob.R
 import com.droidper.xtrajob.core.desingn.DialogTimePicker
 import com.droidper.xtrajob.core.desingn.RowHourMinute
 import com.droidper.xtrajob.core.desingn.TopAppBarBasic
-import com.droidper.xtrajob.feature.home.RowTitleWithContent
+import com.droidper.xtrajob.view.home.RowTitleWithContent
 import com.droidper.xtrajob.ui.theme.AppTheme
 
 @Preview(

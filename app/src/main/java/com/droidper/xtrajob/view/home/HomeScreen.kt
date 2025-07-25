@@ -1,4 +1,4 @@
-package com.droidper.xtrajob.feature.home
+package com.droidper.xtrajob.view.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES

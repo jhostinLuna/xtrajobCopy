@@ -3,7 +3,7 @@ package com.droidper.xtrajob
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.droidper.xtrajob.feature.XtraJobComposeApp
+import com.droidper.xtrajob.view.XtraJobComposeApp
 import com.droidper.xtrajob.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
