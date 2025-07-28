@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "record_day")
 data class RecordDayEntity (
-    @PrimaryKey(autoGenerate = true) val uid: Int,
+    @PrimaryKey(autoGenerate = true) val uid: Int = 0,
     @ColumnInfo(name = "start_day") val startDay: Long,
     @ColumnInfo(name = "end_day") val endDay:Long,
     @ColumnInfo(name = "start_break_work") val startBreakWork: Long,

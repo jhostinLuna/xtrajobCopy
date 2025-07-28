@@ -1,7 +1,7 @@
 package com.droidper.xtrajob.domain.interactor
 
 import com.droidper.xtrajob.core.common.Resource
-import com.droidper.xtrajob.core.common.Failure
+import com.droidper.xtrajob.domain.model.CoreFailure
 
 /**
  * Executes business logic in its execute method and keep posting updates to the result as
@@ -10,5 +10,5 @@ import com.droidper.xtrajob.core.common.Failure
  */
 abstract class UseCase<in P, out R> where R : Any {
 
-    abstract fun execute(parameters: P): Resource<Failure, R>
+    abstract fun execute(parameters: P): Resource<CoreFailure, R>
 }
