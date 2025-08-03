@@ -1,4 +1,4 @@
-package com.droidper.xtrajob.view.recorddays
+package com.droidper.xtrajob.ui.view.recorddays
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES

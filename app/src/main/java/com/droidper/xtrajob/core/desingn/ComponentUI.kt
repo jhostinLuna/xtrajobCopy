@@ -58,6 +58,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.droidper.xtrajob.R
 import com.droidper.xtrajob.ui.theme.AppTheme
+import com.droidper.xtrajob.ui.theme.blueDE
 
 
 @Preview(
@@ -263,6 +264,36 @@ fun BoxHour(number: String) {
 
     }
 }
+
+@Composable
+fun BoxHourMedium(number: String){
+    Surface(
+        modifier = Modifier
+            .width(41.dp)
+            .height(45.dp),
+        shape = RoundedCornerShape(4.dp),
+        color = Color.Black.copy(0f),
+        border = BorderStroke(2.dp, blueDE)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.Center),
+                text = number,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = blueDE
+            )
+        }
+
+    }
+}
+
 @Composable
 fun HeaderListDaysRecorded(
     modifier: Modifier = Modifier
@@ -314,21 +345,12 @@ fun HeaderListDaysRecorded(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogTimePicker(
-    timepickerState: TimePickerState,
     show: Boolean = false,
     onDismiss: () -> Unit,
-    onClickAccept: () -> Unit
+    onclickAccept: (minute:Int,hour: Int) -> Unit,
 ) {
+    val timepickerState: TimePickerState = rememberTimePickerState()
     if (show) {
-            /*
-            AlertDialog(
-                onDismissRequest = { /*TODO*/ },
-                properties = DialogProperties(dismissOnBackPress = true,dismissOnClickOutside = true)
-            ) {
-
-            }
-
-             */
         AlertDialog(
             title = { Text(text = stringResource(id = R.string.select_hour))},
             text = {
@@ -343,25 +365,27 @@ fun DialogTimePicker(
             properties = DialogProperties(dismissOnBackPress = true,dismissOnClickOutside = true),
             onDismissRequest = onDismiss,
             confirmButton = { 
-                Button(onClick = onClickAccept) {
+                Button(onClick = {
+                    onclickAccept(timepickerState.hour, timepickerState.minute)
+                },
+                    content = {
                     Text(text = stringResource(id = R.string.acept))
-                }
+                    }
+                )
             },
         )
 
     }
 
 }
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(
     device = Devices.PIXEL_3A
 )
 @Composable
 fun DialogTimePickerPreview () {
     DialogTimePicker(
-        timepickerState = rememberTimePickerState(),
         show = true,
-        onClickAccept = {},
+        onclickAccept = { _, _ ->},
         onDismiss = {}
     )
 }

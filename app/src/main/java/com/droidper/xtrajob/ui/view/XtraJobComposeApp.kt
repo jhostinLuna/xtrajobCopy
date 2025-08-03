@@ -1,4 +1,4 @@
-package com.droidper.xtrajob.view
+package com.droidper.xtrajob.ui.view
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import androidx.compose.runtime.Composable
@@ -9,10 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.droidper.xtrajob.core.navigation.Screen
-import com.droidper.xtrajob.view.home.HomeScreen
-import com.droidper.xtrajob.view.newworkday.NewDayScreen
-import com.droidper.xtrajob.view.recorddays.RecordDaysScreen
-import com.droidper.xtrajob.view.workcalendar.WorkCalendarScreen
+import com.droidper.xtrajob.ui.view.home.HomeScreen
+import com.droidper.xtrajob.ui.view.newworkday.NewDayScreen
+import com.droidper.xtrajob.ui.view.recorddays.RecordDaysScreen
+import com.droidper.xtrajob.ui.view.workcalendar.WorkCalendarScreen
 import com.droidper.xtrajob.ui.theme.AppTheme
 
 @Preview(
@@ -57,7 +57,7 @@ fun XtraJobComposeApp (
             )
         }
         composable(route = Screen.NewDay.route) {
-            NewDayScreen {
+            NewDayScreen(viewModelFactory = null) {
 
             }
         }

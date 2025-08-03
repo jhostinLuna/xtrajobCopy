@@ -4,7 +4,11 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.droidper.xtrajob.data.model.RecordDayEntity
 
-@Database(entities = [RecordDayEntity::class], version = 1)
+@Database(
+    entities = [RecordDayEntity::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun recordDayDao (): RecordDayDao
 }

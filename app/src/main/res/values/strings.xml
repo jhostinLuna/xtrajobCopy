@@ -13,7 +13,7 @@
     <string name="recorded_days">Dias Registrados</string>
     <string name="newday_title1">Hora Inicio</string>
     <string name="newday_title2">Hora fin</string>
-    <string name="newday_title3">Descanso (descanso sin pago)</string>
+    <string name="split_work">Horario partido</string>">
     <string name="observations">Observaciones</string>
     <string name="select_hour">Selecciona hora y minuto</string>
     <string name="acept">Aceptar</string>

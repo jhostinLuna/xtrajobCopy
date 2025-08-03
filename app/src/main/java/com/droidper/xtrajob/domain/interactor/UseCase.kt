@@ -1,5 +1,6 @@
 package com.droidper.xtrajob.domain.interactor
 
+import androidx.compose.runtime.snapshots.SnapshotApplyResult
 import com.droidper.xtrajob.core.common.Resource
 import com.droidper.xtrajob.domain.model.CoreFailure
 
@@ -9,6 +10,9 @@ import com.droidper.xtrajob.domain.model.CoreFailure
  * Handling an exception (emit [Resource.Error] to the result) is the subclasses's responsibility.
  */
 abstract class UseCase<in P, out R> where R : Any {
+    suspend operator fun invoke(parameters: P, onResult: (Resource<CoreFailure, R>) -> Unit = {}) {
+        onResult(execute(parameters))
 
-    abstract fun execute(parameters: P): Resource<CoreFailure, R>
+    }
+    abstract suspend fun execute(parameters: P): Resource<CoreFailure, R>
 }
