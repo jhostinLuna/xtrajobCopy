@@ -7,6 +7,8 @@ import com.droidper.xtrajob.frameworks.roomdatabase.RecordDayDao
 import com.droidper.xtrajob.domain.RecordDayRepository
 import com.droidper.xtrajob.data.RecordDayRepositoryImpl
 import com.droidper.xtrajob.domain.usecase.SaveWorkDayUseCase
+import com.droidper.xtrajob.ui.timepicker.TimePickerMapper
+import com.droidper.xtrajob.ui.view.newworkday.DatePickerMapper
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -36,6 +38,14 @@ object DatabaseModule {
     @Provides
     fun provideSaveWorkDayUseCase(recordDayRepository: RecordDayRepository): SaveWorkDayUseCase {
         return SaveWorkDayUseCase(recordDayRepository)
+    }
+    @Provides
+    fun provideDatePickMapper(): DatePickerMapper {
+        return DatePickerMapper()
+    }
+    @Provides
+    fun provideTimePickerMapper(): TimePickerMapper {
+        return TimePickerMapper()
     }
 }
 

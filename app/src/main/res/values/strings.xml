@@ -17,4 +17,6 @@
     <string name="observations">Observaciones</string>
     <string name="select_hour">Selecciona hora y minuto</string>
     <string name="acept">Aceptar</string>
+    <string name="text_date_start_day">Inicio de jornada</string>
+    <string name="text_date_end_day">Fin de jornada</string>
 </resources>

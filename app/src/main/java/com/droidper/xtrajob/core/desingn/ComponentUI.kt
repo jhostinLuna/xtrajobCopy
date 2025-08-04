@@ -27,6 +27,9 @@ import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerFormatter
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,8 +39,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -349,7 +354,11 @@ fun DialogTimePicker(
     onDismiss: () -> Unit,
     onclickAccept: (minute:Int,hour: Int) -> Unit,
 ) {
-    val timepickerState: TimePickerState = rememberTimePickerState()
+    val timepickerState: TimePickerState = rememberTimePickerState(
+        initialHour = 0,
+        initialMinute = 0,
+        is24Hour = true
+    )
     if (show) {
         AlertDialog(
             title = { Text(text = stringResource(id = R.string.select_hour))},
@@ -359,7 +368,9 @@ fun DialogTimePicker(
                         .fillMaxSize()
                         .padding(vertical = 12.dp),
                 ){
-                    TimePicker(state = timepickerState )
+                    TimePicker(
+                        state = timepickerState ,
+                    )
                 }
             },
             properties = DialogProperties(dismissOnBackPress = true,dismissOnClickOutside = true),
@@ -375,6 +386,43 @@ fun DialogTimePicker(
             },
         )
 
+    }
+
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerDialog(
+    title: String = "",
+    show: Boolean = false,
+    onDismiss: () -> Unit,
+    onclickAccept: (dateMillisTimestamp: Long) -> Unit,
+) {
+    val datePickerState: DatePickerState = rememberDatePickerState()
+    val dateFormatter = remember{ DatePickerFormatter()}
+    if (show) {
+        AlertDialog(
+            onDismissRequest = {
+                onDismiss()
+            },
+            confirmButton = {
+                Button(onClick = {
+                    onclickAccept(datePickerState.selectedDateMillis?:0)
+                }) {
+                    Text(text = stringResource(id = R.string.acept))
+                }
+            },
+            dismissButton = {
+                onDismiss()
+            },
+            title = { Text(text = title) },
+            text = {
+                DatePicker(
+                    state = datePickerState,
+                    title = { Text(text = "Select date") },
+                    dateFormatter = dateFormatter
+                )
+            }
+        )
     }
 
 }

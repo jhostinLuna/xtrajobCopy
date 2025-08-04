@@ -14,8 +14,8 @@ fun Modifier.bottomBorder(strokeWidth: Dp, color: Color) = composed(
 
         val strokeWidthPx = density.run { strokeWidth.toPx() }
 
-        Modifier
-            .drawBehind {
+
+            this.drawBehind {
             val width = size.width
             val height = size.height - strokeWidthPx/2
 

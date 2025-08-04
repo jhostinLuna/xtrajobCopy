@@ -12,6 +12,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -54,7 +58,8 @@ fun HomeScreenPreview() {
         HomeScreen(
             navigateToCalendarScreen = {},
             navigateToLogin = {},
-            navigateToRecordDayScreen = {}
+            navigateToRecordDayScreen = {},
+            navToNewDay = {}
         )
     }
 
@@ -65,7 +70,8 @@ fun HomeScreen(
     navHostController: NavHostController = rememberNavController(),
     navigateToCalendarScreen: () -> Unit,
     navigateToLogin: () -> Unit,
-    navigateToRecordDayScreen: () -> Unit
+    navigateToRecordDayScreen: () -> Unit,
+    navToNewDay: () -> Unit
 ) {
 
     Scaffold(
@@ -77,7 +83,19 @@ fun HomeScreen(
                 //Registrar
             }
         },
-        modifier = Modifier
+
+        floatingActionButton = {
+            IconButton(
+                onClick = navToNewDay,
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    imageVector = Icons.Filled.AddCircle,
+                    contentDescription = "Button for add new recorded work"
+                )
+            }
+        }
     ) {innerPadding ->
         Column(
             modifier = Modifier

@@ -1,6 +1,5 @@
 package com.droidper.xtrajob.domain.interactor
 
-import androidx.compose.runtime.snapshots.SnapshotApplyResult
 import com.droidper.xtrajob.core.common.Resource
 import com.droidper.xtrajob.domain.model.CoreFailure
 

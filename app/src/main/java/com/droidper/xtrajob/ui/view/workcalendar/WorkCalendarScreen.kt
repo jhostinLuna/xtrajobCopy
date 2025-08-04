@@ -9,12 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -45,8 +41,7 @@ import com.droidper.xtrajob.ui.theme.AppTheme
 fun WorkCalendarScreenPreview(){
     AppTheme {
         WorkCalendarScreen(
-            navToBack = {},
-            navToNewDay = {}
+            navToBack = {}
         )
     }
 }
@@ -54,26 +49,13 @@ fun WorkCalendarScreenPreview(){
 @Composable
 fun WorkCalendarScreen(
     navToBack: () -> Unit,
-    navToNewDay: () -> Unit
 ) {
     Scaffold(
         modifier = Modifier,
         topBar = { TopAppBarBasic(
             title = stringResource(id = R.string.work_calendar),
             onclickArrowBack = navToBack
-        )},
-        floatingActionButton = {
-            IconButton(
-                onClick = navToNewDay,
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    imageVector = Icons.Filled.AddCircle,
-                    contentDescription = "Button for add new recorded work"
-                )
-            }
-        }
+        )}
     ) {innerPaddingValue->
         Column(
             modifier = Modifier

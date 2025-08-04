@@ -44,6 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.droidper.xtrajob.R
 import com.droidper.xtrajob.core.common.PreviewViewModelFactory
 import com.droidper.xtrajob.core.desingn.BoxHourMedium
+import com.droidper.xtrajob.core.desingn.DatePickerDialog
 import com.droidper.xtrajob.core.desingn.DialogTimePicker
 import com.droidper.xtrajob.core.desingn.RowHourMinute
 import com.droidper.xtrajob.core.desingn.TopAppBarBasic
@@ -87,8 +88,18 @@ fun NewDayScreen(
         // En producción, seguimos usando hiltViewModel
         hiltViewModel()
     }
-    val initTimerPickerUiState by viewmodel.timeInitPickerUiState.collectAsState()
-    val finTimerPickerUiState by viewmodel.timeFinPickerUiState.collectAsState()
+    val workDayUiState by viewmodel.workDayUiState.collectAsState()
+    val startTimeWork = workDayUiState.dayWorkDayUIModel.startDayWorkTimeUiModel
+    val endTimeWork = workDayUiState.dayWorkDayUIModel.endDayWorkTimeUiModel
+    val switchBreakWork = workDayUiState.dayWorkDayUIModel.isBreak
+    val dateStartWork = workDayUiState.dayWorkDayUIModel.dateStartWorkday
+    val dateEndWork = workDayUiState.dayWorkDayUIModel.dateEndWorkday
+
+    var switchBreakWorkState by remember {
+        mutableStateOf(false)
+    }
+
+    switchBreakWorkState = switchBreakWork
     Scaffold(
         topBar = {
             TopAppBarBasic(
@@ -118,14 +129,35 @@ fun NewDayScreen(
         }
     ) {innerPaddingValue->
 
+        var showStartDatePicker by remember {
+            mutableStateOf(false)
+        }
+        DatePickerDialog(
+            title = stringResource(id = R.string.text_date_start_day),
+            show = showStartDatePicker,
+            onDismiss = {  },
+        ) {
+            viewmodel.updateDateStartWorkDay(it)
+            showStartDatePicker = false
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPaddingValue),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            RowTitleWithContent(title = stringResource(id = R.string.newday_title1), topSpacer = 10.dp, bottomSpacer = 10.dp) {
-
+            RowTitleWithContent(
+                title = stringResource(id = R.string.newday_title1),
+                topSpacer = 10.dp,
+                bottomSpacer = 10.dp
+            ) {
+                Text(
+                    modifier = Modifier
+                        .clickable {
+                            showStartDatePicker = true
+                        },
+                    text = dateStartWork
+                )
             }
             // Hora Inicio
 
@@ -137,32 +169,53 @@ fun NewDayScreen(
                 color = MaterialTheme.colorScheme.inversePrimary,
                 shadowElevation = 4.dp
             ) {
-                var showTimePicker by remember {
+                var showStartTimePicker by remember {
                     mutableStateOf(false)
                 }
                 RowHourMinute(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clickable { showTimePicker = true },
-                    hour = initTimerPickerUiState.timerPickerModel.hour,
-                    minute = initTimerPickerUiState.timerPickerModel.hour
+                        .clickable { showStartTimePicker = true },
+                    hour = startTimeWork.hour,
+                    minute = startTimeWork.minute
                 )
                 DialogTimePicker(
-                    show = showTimePicker,
+                    show = showStartTimePicker,
                     onclickAccept = {hour, minute ->
 
-                        viewmodel.updateTimeInit(hour = hour, minute = minute)
-                        showTimePicker = false
+                        viewmodel.updateTimeWorkStart(hour = hour, minute = minute)
+                        showStartTimePicker = false
                                     },
-                    onDismiss = {showTimePicker = false}
+                    onDismiss = {showStartTimePicker = false}
                 )
             }
             Spacer(modifier = Modifier.height(50.dp))
 
             //Hora Fin
-            RowTitleWithContent(title = stringResource(id = R.string.newday_title2), topSpacer = 10.dp, bottomSpacer = 10.dp) {
-
+            var showEndDatePicker by remember {
+                mutableStateOf(false)
             }
+            DatePickerDialog(
+                title = stringResource(id = R.string.text_date_end_day),
+                show = showEndDatePicker,
+                onDismiss = {  },
+            ) {
+                viewmodel.updateDateEndWorkDay(it)
+                showEndDatePicker = false
+            }
+            RowTitleWithContent(
+                title = stringResource(id = R.string.newday_title2),
+                topSpacer = 10.dp,
+                bottomSpacer = 10.dp
+            ) {
+                Text(
+                    modifier = Modifier.clickable {
+                        showEndDatePicker = true
+                    },
+                    text = dateEndWork
+                )
+            }
+
             Surface(
                 modifier = Modifier
                     .width(262.dp)
@@ -171,46 +224,51 @@ fun NewDayScreen(
                 color = MaterialTheme.colorScheme.tertiaryContainer,
                 shadowElevation = 4.dp
             ) {
-                var showTimePicker by remember {
+                var showEndTimePicker by remember {
                     mutableStateOf(false)
                 }
                 RowHourMinute(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clickable { showTimePicker = true },
-                    hour = finTimerPickerUiState.timerPickerModel.hour,
-                    minute = finTimerPickerUiState.timerPickerModel.minute
+                        .clickable { showEndTimePicker = true },
+                    hour = endTimeWork.hour,
+                    minute = endTimeWork.minute
                 )
                 DialogTimePicker(
-                    show = showTimePicker,
+                    show = showEndTimePicker,
                     onclickAccept = {hour,minute ->
-                        viewmodel.updateTimeFin(hour = hour, minute = minute)
-                        showTimePicker = false},
-                    onDismiss = {showTimePicker = false}
+                        viewmodel.updateTimeWorkEnd(hour = hour, minute = minute)
+                        showEndTimePicker = false},
+                    onDismiss = {showEndTimePicker = false}
                 )
 
             }
             Spacer(modifier = Modifier.height(50.dp))
-            var switchBreakWorkState by remember {
+
+            var showStartBreakTimePicker by remember {
                 mutableStateOf(false)
-            }
-            var showDialogTime by remember {
-                mutableStateOf(false)
-            }
-            RowTitleWithContent(title = stringResource(id = R.string.split_work), topSpacer = 10.dp, bottomSpacer = 10.dp) {
-                Switch(checked = switchBreakWorkState, onCheckedChange = {switchBreakWorkState = !switchBreakWorkState})
             }
 
-            if (switchBreakWorkState) {
-                DialogTimePicker(
-                    show = showDialogTime,
-                    onclickAccept = { hour, minute ->
-                        viewmodel.updateTimeBreak(hour = hour, minute = minute)
-                        showDialogTime = false
-                    },
-                    onDismiss = {showDialogTime = false}
-                )
+            RowTitleWithContent(
+                title = stringResource(id = R.string.split_work),
+                topSpacer = 10.dp,
+                bottomSpacer = 10.dp
+            ) {
+                Switch(checked = switchBreakWorkState, onCheckedChange = {
+                    viewmodel.changeBreakWorkState()
+                })
             }
+
+
+                DialogTimePicker(
+                    show = switchBreakWorkState,
+                    onclickAccept = { hour, minute ->
+                        viewmodel.updateTimeBreakStart(hour, minute)
+                        switchBreakWorkState = false
+                    },
+                    onDismiss = {switchBreakWorkState = false}
+                )
+
 
             var observationState by remember {
                 mutableStateOf("")
@@ -223,7 +281,7 @@ fun NewDayScreen(
             ){
                 WorkBreak(
                     modifier = Modifier
-                        .clickable { showDialogTime = true },
+                        .clickable { showStartBreakTimePicker = true },
                     hours = listOf("12","18")
                 )
                 BoxHourMedium(number = "0h")
