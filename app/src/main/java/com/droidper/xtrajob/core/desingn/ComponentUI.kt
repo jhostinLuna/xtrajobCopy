@@ -5,6 +5,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +43,10 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,6 +68,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.droidper.xtrajob.R
 import com.droidper.xtrajob.ui.theme.AppTheme
 import com.droidper.xtrajob.ui.theme.blueDE
+import com.droidper.xtrajob.ui.view.home.RowTitleWithContent
 
 
 @Preview(
@@ -87,13 +92,32 @@ fun HeaderHomePreview() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
+            Text(text = "HeaderHome")
             HeaderHome(
                 name = "Alejandro",
                 onclickMinus = {},
                 onclickMore = {},
                 onclickRegister = {}
             )
+            Text(text = "HeaderListDaysRecorded")
             HeaderListDaysRecorded()
+            Text(text = "RowHourMinute")
+            RowHourMinute(
+                modifier = Modifier,
+                hour = "08",
+                minute = "00"
+            )
+            Text(text = "PointWhite")
+            PointWhite()
+            Text(text = "BoxHour")
+            BoxHour(number = "08")
+            Text(text = "BoxHourMedium")
+            BoxHourMedium(number = "08")
+            Text(text = "ButtonM")
+            ButtonM(text = "Registrar") {
+
+            }
+
         }
 
     }
@@ -436,4 +460,111 @@ fun DialogTimePickerPreview () {
         onclickAccept = { _, _ ->},
         onDismiss = {}
     )
+}
+@Composable
+fun TimeBreakDialog(
+    show: Boolean = false,
+    onDismiss: () -> Unit,
+    onclickAccept: () -> Unit
+) {
+    if (show) {
+        AlertDialog(
+            onDismissRequest = {
+                onDismiss()
+            },
+            confirmButton = {
+                Button(onClick = {
+                    onclickAccept()
+                }) {
+                    Text(text = stringResource(id = R.string.acept))
+
+                }
+            },
+            dismissButton = {
+                onDismiss()
+            },
+            title = { Text(text = stringResource(id = R.string.select_breaktime))},
+            text = {
+                Column {
+                    RowTitleWithContent(
+                        title = stringResource(id = R.string.init_breaktime),
+                        topSpacer = 10.dp,
+                        bottomSpacer = 10.dp
+                    ) {
+
+                    }
+                    Surface(
+                        modifier = Modifier
+                            .width(262.dp)
+                            .height(100.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        color = MaterialTheme.colorScheme.inversePrimary,
+                        shadowElevation = 4.dp
+                    ) {
+                        var showStartTimePicker by remember {
+                            mutableStateOf(false)
+                        }
+                        RowHourMinute(
+                            modifier = Modifier
+                                .clickable { showStartTimePicker = true },
+                            hour = "00",
+                            minute = "00"
+                        )
+                        DialogTimePicker(
+                            show = showStartTimePicker,
+                            onclickAccept = {hour, minute ->
+
+                            },
+                            onDismiss = {showStartTimePicker = false}
+                        )
+                    }
+                    RowTitleWithContent(
+                        title = stringResource(id = R.string.fin_breaktime),
+                        topSpacer = 10.dp,
+                        bottomSpacer = 10.dp
+                    ) {
+
+                    }
+                    Surface(
+                        modifier = Modifier
+                            .width(262.dp)
+                            .height(100.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        shadowElevation = 4.dp
+                    ) {
+                        var showEndTimePicker by remember {
+                            mutableStateOf(false)
+                        }
+                        RowHourMinute(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable { showEndTimePicker = true },
+                            hour = "00",
+                            minute = "00"
+                        )
+                        DialogTimePicker(
+                            show = showEndTimePicker,
+                            onclickAccept = {hour,minute ->
+                                showEndTimePicker = false},
+                            onDismiss = {showEndTimePicker = false}
+                        )
+
+                    }
+                }
+            }
+        )
+    }
+}
+@Preview
+@Composable
+fun PreviewTimeBreakDialog() {
+    TimeBreakDialog(
+        show = true,
+        onDismiss = {},
+        onclickAccept = {
+
+        }
+    )
+
 }

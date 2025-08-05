@@ -31,7 +31,7 @@ class NewDayScreenViewModel @Inject constructor(
         updateDateEndWorkDay(dateTimeNow)
     }
 
-    fun saveWorkDay(hourInit: String, hourFin: String, startBreak: String, endBreak: String, observation: String) {
+    fun saveWorkDay() {
         viewModelScope.launch {
             saveWorkDayUseCase(SaveWorkDayUseCase.Params(workDayUiModelToDomainMapper.map(_workDayUiState.value.dayWorkDayUIModel)))
         }

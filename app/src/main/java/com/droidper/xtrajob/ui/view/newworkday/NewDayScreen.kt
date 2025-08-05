@@ -47,6 +47,7 @@ import com.droidper.xtrajob.core.desingn.BoxHourMedium
 import com.droidper.xtrajob.core.desingn.DatePickerDialog
 import com.droidper.xtrajob.core.desingn.DialogTimePicker
 import com.droidper.xtrajob.core.desingn.RowHourMinute
+import com.droidper.xtrajob.core.desingn.TimeBreakDialog
 import com.droidper.xtrajob.core.desingn.TopAppBarBasic
 import com.droidper.xtrajob.core.desingn.WorkBreak
 import com.droidper.xtrajob.ui.view.home.RowTitleWithContent
@@ -85,7 +86,6 @@ fun NewDayScreen(
     val viewmodel = if (viewModelFactory != null) {
         viewModel<NewDayScreenViewModel>(factory = viewModelFactory)
     } else {
-        // En producción, seguimos usando hiltViewModel
         hiltViewModel()
     }
     val workDayUiState by viewmodel.workDayUiState.collectAsState()
@@ -109,7 +109,7 @@ fun NewDayScreen(
         },
         floatingActionButton = {
             IconButton(onClick = {
-            /*TODO*/
+            viewmodel.saveWorkDay()
             }) {
                 Surface(
                     modifier = Modifier,
@@ -256,18 +256,15 @@ fun NewDayScreen(
             ) {
                 Switch(checked = switchBreakWorkState, onCheckedChange = {
                     viewmodel.changeBreakWorkState()
+                    showStartBreakTimePicker = it
                 })
             }
 
 
-                DialogTimePicker(
-                    show = switchBreakWorkState,
-                    onclickAccept = { hour, minute ->
-                        viewmodel.updateTimeBreakStart(hour, minute)
-                        switchBreakWorkState = false
-                    },
-                    onDismiss = {switchBreakWorkState = false}
-                )
+            TimeBreakDialog(
+                show = showStartBreakTimePicker,
+                onDismiss = {  }
+            ) { }
 
 
             var observationState by remember {
@@ -280,8 +277,6 @@ fun NewDayScreen(
                 verticalAlignment = Alignment.CenterVertically
             ){
                 WorkBreak(
-                    modifier = Modifier
-                        .clickable { showStartBreakTimePicker = true },
                     hours = listOf("12","18")
                 )
                 BoxHourMedium(number = "0h")

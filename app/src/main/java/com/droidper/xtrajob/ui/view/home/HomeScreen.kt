@@ -30,8 +30,6 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.droidper.xtrajob.R
 import com.droidper.xtrajob.core.desingn.CardDayHoursMoney
 import com.droidper.xtrajob.core.desingn.CardMonth
@@ -57,7 +55,6 @@ fun HomeScreenPreview() {
     AppTheme {
         HomeScreen(
             navigateToCalendarScreen = {},
-            navigateToLogin = {},
             navigateToRecordDayScreen = {},
             navToNewDay = {}
         )
@@ -67,9 +64,7 @@ fun HomeScreenPreview() {
 }
 @Composable
 fun HomeScreen(
-    navHostController: NavHostController = rememberNavController(),
     navigateToCalendarScreen: () -> Unit,
-    navigateToLogin: () -> Unit,
     navigateToRecordDayScreen: () -> Unit,
     navToNewDay: () -> Unit
 ) {

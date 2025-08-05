@@ -11,6 +11,4 @@ data class WorkDayUIModel(
     val endDayBreakTimeUiModel: TimeUiModel = TimeUiModel(),
     val isBreak: Boolean = false,
     val observation: String = ""
-) {
-
-}
+)

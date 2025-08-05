@@ -51,7 +51,6 @@ fun XtraJobComposeApp (
         composable(route = Screen.Home.route) {
             HomeScreen(
                 navigateToCalendarScreen = { navHostController.navigate(Screen.Calendar.route) },
-                navigateToLogin = { /*TODO*/ },
                 navigateToRecordDayScreen = { navHostController.navigate(Screen.RecordDays.route) },
                 navToNewDay = { navHostController.navigate(Screen.NewDay.route) }
             )

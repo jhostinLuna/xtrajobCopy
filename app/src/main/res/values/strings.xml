@@ -19,4 +19,7 @@
     <string name="acept">Aceptar</string>
     <string name="text_date_start_day">Inicio de jornada</string>
     <string name="text_date_end_day">Fin de jornada</string>
+    <string name="init_breaktime">Inicio Descanso</string>
+    <string name="fin_breaktime">Fin Descanso</string>
+    <string name="select_breaktime">Selecciona hora de descanso</string>
 </resources>
