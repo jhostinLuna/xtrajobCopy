@@ -23,14 +23,6 @@ class PreviewViewModelFactory: ViewModelProvider.Factory {
                     return Resource.Success(1L)
                 }
             }
-
-            // Usamos el dummyRecordDayRepository para crear el dummySaveWorkDayUseCase
-            val dummySaveWorkDayUseCase = object : SaveWorkDayUseCase(dummyRecordDayRepository) {
-                override suspend fun execute(parameters: Params): Resource<CoreFailure, Long> {
-                    // Llama al método del repositorio de prueba
-                    return dummyRecordDayRepository.addWorkDay(parameters.recordDay)
-                }
-            }
             return NewDayScreenViewModel(
                 saveWorkDayUseCase = SaveWorkDayUseCase(dummyRecordDayRepository),
                 workDayUiModelToDomainMapper = WorkDayUiModelToDomainMapper(),

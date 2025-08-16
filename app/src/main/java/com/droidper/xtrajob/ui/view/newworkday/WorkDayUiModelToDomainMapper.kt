@@ -3,8 +3,6 @@ package com.droidper.xtrajob.ui.view.newworkday
 import com.droidper.xtrajob.core.common.Mapper
 import com.droidper.xtrajob.domain.model.RecordDay
 import com.droidper.xtrajob.ui.model.WorkDayUIModel
-import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 class WorkDayUiModelToDomainMapper @Inject constructor(): Mapper<WorkDayUIModel, RecordDay> {
