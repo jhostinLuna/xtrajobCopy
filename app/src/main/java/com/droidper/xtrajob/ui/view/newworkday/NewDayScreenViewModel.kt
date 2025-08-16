@@ -1,46 +1,58 @@
 package com.droidper.xtrajob.ui.view.newworkday
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.droidper.xtrajob.core.common.Resource
 import com.droidper.xtrajob.domain.usecase.SaveWorkDayUseCase
-import com.droidper.xtrajob.ui.model.WorkDayUIModel
-import com.droidper.xtrajob.ui.timepicker.TimePickerMapper
+import com.droidper.xtrajob.ui.timepicker.TimeUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class NewDayScreenViewModel @Inject constructor(
     private val saveWorkDayUseCase: SaveWorkDayUseCase,
-    private val timePickerMapper: TimePickerMapper,
     private val datePickerMapper: DatePickerMapper,
     private val workDayUiModelToDomainMapper: WorkDayUiModelToDomainMapper
 ) : ViewModel() {
-
+    private val tag = this@NewDayScreenViewModel.javaClass.name
     private val _workDayUiState: MutableStateFlow<WorkDayUiState> = MutableStateFlow(WorkDayUiState())
     val workDayUiState: StateFlow<WorkDayUiState> = _workDayUiState.asStateFlow()
 
-    init {
-        val dateTimeNow = Date().time
-        updateDateStartWorkDay(dateTimeNow)
-        updateDateEndWorkDay(dateTimeNow)
-    }
-
     fun saveWorkDay() {
         viewModelScope.launch {
-            saveWorkDayUseCase(SaveWorkDayUseCase.Params(workDayUiModelToDomainMapper.map(_workDayUiState.value.dayWorkDayUIModel)))
+            saveWorkDayUseCase(
+                SaveWorkDayUseCase.Params(workDayUiModelToDomainMapper.map(_workDayUiState.value.dayWorkDayUIModel))
+            ){resource->
+                when(resource) {
+                    is Resource.Error -> {
+                        Log.d(tag, "saveWorkDay: Error")
+                    }
+                    is Resource.Success -> {
+                        Log.d(tag, "saveWorkDay: Success")
+                    }
+                    else -> {
+                        Log.d(tag, "saveWorkDay: Loading")
+                    }
+                }
+            }
         }
 
     }
     fun updateTimeWorkStart(hour: Int, minute: Int) {
         _workDayUiState.update {
             WorkDayUiState(
-                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(startDayWorkTimeUiModel = timePickerMapper.map(Pair(hour,minute))),
+                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(
+                    startDayWorkTimeUiModel = TimeUiModel(
+                        dateTime = it.dayWorkDayUIModel.startDayWorkTimeUiModel.dateTime.withHour(hour)
+                            .withMinute(minute)
+                    )
+                ),
                 isLoading = false,
                 isError = false,
                 errorMessage = ""
@@ -50,28 +62,17 @@ class NewDayScreenViewModel @Inject constructor(
     fun updateTimeWorkEnd(hour: Int, minute: Int) {
         _workDayUiState.update {
             WorkDayUiState(
-                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(endDayWorkTimeUiModel = timePickerMapper.map(Pair(hour,minute))),
+                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(
+                    endDayWorkTimeUiModel = TimeUiModel(
+                        dateTime = it.dayWorkDayUIModel.endDayWorkTimeUiModel.dateTime.withHour(hour)
+                            .withMinute(minute)
+                    )
+                ),
                 isLoading = false,
                 isError = false,
                 errorMessage = ""
             )
         }
-    }
-
-    fun updateTimeBreakStart(hour: Int, minute: Int) {
-        _workDayUiState.update {
-            WorkDayUiState(
-                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(startDayBreakTimeUiModel = timePickerMapper.map(Pair(hour,minute))),
-                isLoading = false,
-                isError = false,
-                errorMessage = ""
-            )
-        }
-
-    }
-
-    fun updateTimeBreakEnd(hour: Int, minute: Int) {
-        _workDayUiState.update { it.copy(dayWorkDayUIModel = WorkDayUIModel(endDayBreakTimeUiModel = timePickerMapper.map(Pair(hour,minute)))) }
     }
 
     fun changeBreakWorkState() {
@@ -91,7 +92,7 @@ class NewDayScreenViewModel @Inject constructor(
     fun updateDateStartWorkDay(dateMillis: Long) {
         _workDayUiState.update {
             WorkDayUiState(
-                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(dateStartWorkday = datePickerMapper.map(dateMillis)),
+                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(startDayWorkTimeUiModel = datePickerMapper.map(dateMillis)),
                 isLoading = false,
                 isError = false,
                 errorMessage = ""
@@ -105,7 +106,32 @@ class NewDayScreenViewModel @Inject constructor(
     fun updateDateEndWorkDay(dateMillis: Long) {
         _workDayUiState.update {
             WorkDayUiState(
-                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(dateEndWorkday = datePickerMapper.map(dateMillis)),
+                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(endDayWorkTimeUiModel = datePickerMapper.map(dateMillis)),
+                isLoading = false,
+                isError = false,
+                errorMessage = ""
+            )
+        }
+    }
+
+    fun setBreakWork(
+        startBreakHour: Int,
+        startBreakMinute: Int,
+        endBreakHour: Int,
+        endBreakMinute: Int
+    ) {
+        _workDayUiState.update {
+            WorkDayUiState(
+                dayWorkDayUIModel = it.dayWorkDayUIModel.copy(
+                    startDayBreakTimeUiModel = TimeUiModel(
+                        dateTime = it.dayWorkDayUIModel.startDayBreakTimeUiModel.dateTime.withHour(startBreakHour)
+                            .withMinute(startBreakMinute)
+                    ),
+                    endDayBreakTimeUiModel = TimeUiModel(
+                        dateTime = it.dayWorkDayUIModel.endDayBreakTimeUiModel.dateTime.withHour(endBreakHour)
+                            .withMinute(endBreakMinute)
+                    )
+                ),
                 isLoading = false,
                 isError = false,
                 errorMessage = ""

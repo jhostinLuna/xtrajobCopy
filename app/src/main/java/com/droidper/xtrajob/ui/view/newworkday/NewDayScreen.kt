@@ -50,6 +50,8 @@ import com.droidper.xtrajob.core.desingn.RowHourMinute
 import com.droidper.xtrajob.core.desingn.TimeBreakDialog
 import com.droidper.xtrajob.core.desingn.TopAppBarBasic
 import com.droidper.xtrajob.core.desingn.WorkBreak
+import com.droidper.xtrajob.core.extensions.formattedSpanish
+import com.droidper.xtrajob.core.extensions.withZero
 import com.droidper.xtrajob.ui.view.home.RowTitleWithContent
 import com.droidper.xtrajob.ui.theme.AppTheme
 
@@ -92,8 +94,8 @@ fun NewDayScreen(
     val startTimeWork = workDayUiState.dayWorkDayUIModel.startDayWorkTimeUiModel
     val endTimeWork = workDayUiState.dayWorkDayUIModel.endDayWorkTimeUiModel
     val switchBreakWork = workDayUiState.dayWorkDayUIModel.isBreak
-    val dateStartWork = workDayUiState.dayWorkDayUIModel.dateStartWorkday
-    val dateEndWork = workDayUiState.dayWorkDayUIModel.dateEndWorkday
+    val startBreakWork = workDayUiState.dayWorkDayUIModel.startDayBreakTimeUiModel
+    val endBreakWork = workDayUiState.dayWorkDayUIModel.endDayBreakTimeUiModel
 
     var switchBreakWorkState by remember {
         mutableStateOf(false)
@@ -156,7 +158,7 @@ fun NewDayScreen(
                         .clickable {
                             showStartDatePicker = true
                         },
-                    text = dateStartWork
+                    text = startTimeWork.dateTime.toLocalDate().formattedSpanish()
                 )
             }
             // Hora Inicio
@@ -176,8 +178,8 @@ fun NewDayScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable { showStartTimePicker = true },
-                    hour = startTimeWork.hour,
-                    minute = startTimeWork.minute
+                    hour = startTimeWork.dateTime.hour.withZero(),
+                    minute = startTimeWork.dateTime.minute.withZero()
                 )
                 DialogTimePicker(
                     show = showStartTimePicker,
@@ -212,7 +214,7 @@ fun NewDayScreen(
                     modifier = Modifier.clickable {
                         showEndDatePicker = true
                     },
-                    text = dateEndWork
+                    text = endTimeWork.dateTime.toLocalDate().formattedSpanish()
                 )
             }
 
@@ -231,8 +233,8 @@ fun NewDayScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable { showEndTimePicker = true },
-                    hour = endTimeWork.hour,
-                    minute = endTimeWork.minute
+                    hour = endTimeWork.dateTime.hour.withZero(),
+                    minute = endTimeWork.dateTime.minute.withZero()
                 )
                 DialogTimePicker(
                     show = showEndTimePicker,
@@ -264,7 +266,10 @@ fun NewDayScreen(
             TimeBreakDialog(
                 show = showStartBreakTimePicker,
                 onDismiss = {  }
-            ) { }
+            ) {startBreakHour, startBreakMinute, endBreakHour, endBreakMinute ->
+                viewmodel.setBreakWork(startBreakHour, startBreakMinute, endBreakHour, endBreakMinute)
+                showStartBreakTimePicker = false
+            }
 
 
             var observationState by remember {
@@ -277,7 +282,9 @@ fun NewDayScreen(
                 verticalAlignment = Alignment.CenterVertically
             ){
                 WorkBreak(
-                    hours = listOf("12","18")
+
+                    startBreakWorkTime = "${startBreakWork.dateTime.hour.withZero()}:${startBreakWork.dateTime.minute.withZero()}",
+                    endBreakWorkTime = "${endBreakWork.dateTime.hour.withZero()}:${endBreakWork.dateTime.minute.withZero()}"
                 )
                 BoxHourMedium(number = "0h")
             }

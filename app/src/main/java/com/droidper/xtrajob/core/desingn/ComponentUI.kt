@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.droidper.xtrajob.R
+import com.droidper.xtrajob.core.extensions.withZero
 import com.droidper.xtrajob.ui.theme.AppTheme
 import com.droidper.xtrajob.ui.theme.blueDE
 import com.droidper.xtrajob.ui.view.home.RowTitleWithContent
@@ -465,8 +466,13 @@ fun DialogTimePickerPreview () {
 fun TimeBreakDialog(
     show: Boolean = false,
     onDismiss: () -> Unit,
-    onclickAccept: () -> Unit
+    onclickAccept: (startBreakHour: Int, startBreakMinute: Int, endBreakHour: Int, endBreakMinute: Int) -> Unit
 ) {
+    var startBreakHour = 0
+    var startBreakMinute = 0
+    var endBreakHour = 0
+    var endBreakMinute = 0
+
     if (show) {
         AlertDialog(
             onDismissRequest = {
@@ -474,7 +480,7 @@ fun TimeBreakDialog(
             },
             confirmButton = {
                 Button(onClick = {
-                    onclickAccept()
+                    onclickAccept(startBreakHour, startBreakMinute, endBreakHour, endBreakMinute)
                 }) {
                     Text(text = stringResource(id = R.string.acept))
 
@@ -485,7 +491,9 @@ fun TimeBreakDialog(
             },
             title = { Text(text = stringResource(id = R.string.select_breaktime))},
             text = {
-                Column {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     RowTitleWithContent(
                         title = stringResource(id = R.string.init_breaktime),
                         topSpacer = 10.dp,
@@ -507,13 +515,15 @@ fun TimeBreakDialog(
                         RowHourMinute(
                             modifier = Modifier
                                 .clickable { showStartTimePicker = true },
-                            hour = "00",
-                            minute = "00"
+                            hour = startBreakHour.withZero(),
+                            minute = startBreakMinute.withZero()
                         )
                         DialogTimePicker(
                             show = showStartTimePicker,
                             onclickAccept = {hour, minute ->
-
+                                startBreakHour = hour
+                                startBreakMinute = minute
+                                showStartTimePicker = false
                             },
                             onDismiss = {showStartTimePicker = false}
                         )
@@ -540,12 +550,14 @@ fun TimeBreakDialog(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clickable { showEndTimePicker = true },
-                            hour = "00",
-                            minute = "00"
+                            hour = endBreakHour.withZero(),
+                            minute = endBreakMinute.withZero()
                         )
                         DialogTimePicker(
                             show = showEndTimePicker,
                             onclickAccept = {hour,minute ->
+                                endBreakHour = hour
+                                endBreakMinute = minute
                                 showEndTimePicker = false},
                             onDismiss = {showEndTimePicker = false}
                         )
@@ -562,7 +574,7 @@ fun PreviewTimeBreakDialog() {
     TimeBreakDialog(
         show = true,
         onDismiss = {},
-        onclickAccept = {
+        onclickAccept = { _, _, _, _ ->
 
         }
     )

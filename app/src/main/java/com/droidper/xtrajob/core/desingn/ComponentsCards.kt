@@ -160,43 +160,34 @@ fun ColumnHourWithIcon(
             content = icon,
             color = Color.White.copy(0f)
         )
-        WorkBreak(hours = hours)
+        WorkBreak()
 
     }
 }
 @Composable
 fun WorkBreak(
     modifier: Modifier = Modifier,
-    hours: List<String>) {
+    startBreakWorkTime: String = "-",
+    endBreakWorkTime: String = "-") {
     Column(
         modifier = modifier
             .height(55.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        when (hours.size) {
-            1 -> {
-                Text(
-                    text = hours[0],
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            else -> {
-                Text(
-                    text = hours[0],
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Divider(
-                    modifier = Modifier
-                        .height(14.dp)
-                        .width(2.dp),
-                )
-                Text(
-                    text = hours[1],
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
+        Text(
+            text = startBreakWorkTime,
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Divider(
+            modifier = Modifier
+                .height(14.dp)
+                .width(2.dp),
+        )
+        Text(
+            text = endBreakWorkTime,
+            style = MaterialTheme.typography.bodyMedium
+        )
 
     }
 
@@ -428,8 +419,8 @@ fun CardDayRecorded(
             )
             WorkBreak(
                 modifier = Modifier
-                    .weight(33.3f),
-                hours = hoursBrakingWork)
+                    .weight(33.3f)
+            )
             Text(
                 modifier = Modifier.weight(33.3f),
                 text = hoursDay[1],

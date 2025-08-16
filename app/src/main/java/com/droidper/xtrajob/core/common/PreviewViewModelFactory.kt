@@ -6,7 +6,6 @@ import com.droidper.xtrajob.domain.RecordDayRepository
 import com.droidper.xtrajob.domain.model.CoreFailure
 import com.droidper.xtrajob.domain.model.RecordDay
 import com.droidper.xtrajob.domain.usecase.SaveWorkDayUseCase
-import com.droidper.xtrajob.ui.timepicker.TimePickerMapper
 import com.droidper.xtrajob.ui.view.newworkday.DatePickerMapper
 import com.droidper.xtrajob.ui.view.newworkday.NewDayScreenViewModel
 import com.droidper.xtrajob.ui.view.newworkday.WorkDayUiModelToDomainMapper
@@ -34,7 +33,6 @@ class PreviewViewModelFactory: ViewModelProvider.Factory {
             }
             return NewDayScreenViewModel(
                 saveWorkDayUseCase = SaveWorkDayUseCase(dummyRecordDayRepository),
-                timePickerMapper = TimePickerMapper(),
                 workDayUiModelToDomainMapper = WorkDayUiModelToDomainMapper(),
                 datePickerMapper = DatePickerMapper()
             ) as T
