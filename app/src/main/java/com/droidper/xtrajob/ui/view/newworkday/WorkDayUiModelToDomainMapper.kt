@@ -9,10 +9,10 @@ class WorkDayUiModelToDomainMapper @Inject constructor(): Mapper<WorkDayUIModel,
     override fun map(input: WorkDayUIModel): RecordDay {
 
         return RecordDay(
-            startDay = input.startDayWorkTimeUiModel.dateTime,
-            endDay = input.endDayWorkTimeUiModel.dateTime,
-            startBreakWork = input.startDayBreakTimeUiModel.dateTime,
-            endBreakWork = input.endDayBreakTimeUiModel.dateTime,
+            startDay = input.startDayWorkTime,
+            endDay = input.endDayWorkTime,
+            startBreakWork = input.startDayBreakTime,
+            endBreakWork = input.endDayBreakTime,
             observations = input.observation
         )
     }

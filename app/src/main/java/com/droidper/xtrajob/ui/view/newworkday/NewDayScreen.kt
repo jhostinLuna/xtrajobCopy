@@ -26,7 +26,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,11 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.droidper.xtrajob.R
-import com.droidper.xtrajob.core.common.PreviewViewModelFactory
 import com.droidper.xtrajob.core.desingn.BoxHourMedium
 import com.droidper.xtrajob.core.desingn.DatePickerDialog
 import com.droidper.xtrajob.core.desingn.DialogTimePicker
@@ -74,7 +69,8 @@ import com.droidper.xtrajob.ui.theme.AppTheme
 fun NewDayScreenPreview(){
     AppTheme {
         NewDayScreen(
-            viewModelFactory = PreviewViewModelFactory(),
+            workDayUiState = WorkDayUiState(),
+            saveNewWorkDay = {},
             onPressBack = {}
         )
     }
@@ -82,20 +78,29 @@ fun NewDayScreenPreview(){
 }
 @Composable
 fun NewDayScreen(
-    viewModelFactory: ViewModelProvider.Factory? = null,
-    onPressBack: () -> Unit
+    workDayUiState: WorkDayUiState,
+    changeBreakWorkState: () -> Unit = {},
+    updateDateStartWorkDay: (Long) -> Unit = {},
+    updateDateEndWorkDay: (Long) -> Unit = {},
+    updateTimeWorkStart: (Int, Int) -> Unit = { _,_ -> },
+    updateTimeWorkEnd: (Int, Int) -> Unit = {_,_ ->},
+    setBreakWork: (Int, Int, Int, Int) -> Unit = {_,_,_,_ ->},
+    saveNewWorkDay: () -> Unit = {},
+    onPressBack: () -> Unit = {}
 ){
+    /*
     val viewmodel = if (viewModelFactory != null) {
         viewModel<NewDayScreenViewModel>(factory = viewModelFactory)
     } else {
         hiltViewModel()
     }
-    val workDayUiState by viewmodel.workDayUiState.collectAsState()
-    val startTimeWork = workDayUiState.dayWorkDayUIModel.startDayWorkTimeUiModel
-    val endTimeWork = workDayUiState.dayWorkDayUIModel.endDayWorkTimeUiModel
+
+     */
+    val startTimeWork = workDayUiState.dayWorkDayUIModel.startDayWorkTime
+    val endTimeWork = workDayUiState.dayWorkDayUIModel.endDayWorkTime
     val switchBreakWork = workDayUiState.dayWorkDayUIModel.isBreak
-    val startBreakWork = workDayUiState.dayWorkDayUIModel.startDayBreakTimeUiModel
-    val endBreakWork = workDayUiState.dayWorkDayUIModel.endDayBreakTimeUiModel
+    val startBreakWork = workDayUiState.dayWorkDayUIModel.startDayBreakTime
+    val endBreakWork = workDayUiState.dayWorkDayUIModel.endDayBreakTime
 
     var switchBreakWorkState by remember {
         mutableStateOf(false)
@@ -111,7 +116,7 @@ fun NewDayScreen(
         },
         floatingActionButton = {
             IconButton(onClick = {
-            viewmodel.saveWorkDay()
+            saveNewWorkDay()
             }) {
                 Surface(
                     modifier = Modifier,
@@ -138,8 +143,8 @@ fun NewDayScreen(
             title = stringResource(id = R.string.text_date_start_day),
             show = showStartDatePicker,
             onDismiss = {  },
-        ) {
-            viewmodel.updateDateStartWorkDay(it)
+        ) { timestamp->
+            updateDateStartWorkDay(timestamp)
             showStartDatePicker = false
         }
         Column(
@@ -158,7 +163,7 @@ fun NewDayScreen(
                         .clickable {
                             showStartDatePicker = true
                         },
-                    text = startTimeWork.dateTime.toLocalDate().formattedSpanish()
+                    text = startTimeWork.toLocalDate().formattedSpanish()
                 )
             }
             // Hora Inicio
@@ -178,14 +183,14 @@ fun NewDayScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable { showStartTimePicker = true },
-                    hour = startTimeWork.dateTime.hour.withZero(),
-                    minute = startTimeWork.dateTime.minute.withZero()
+                    hour = startTimeWork.hour.withZero(),
+                    minute = startTimeWork.minute.withZero()
                 )
                 DialogTimePicker(
                     show = showStartTimePicker,
                     onclickAccept = {hour, minute ->
 
-                        viewmodel.updateTimeWorkStart(hour = hour, minute = minute)
+                        updateTimeWorkStart(hour, minute)
                         showStartTimePicker = false
                                     },
                     onDismiss = {showStartTimePicker = false}
@@ -201,8 +206,8 @@ fun NewDayScreen(
                 title = stringResource(id = R.string.text_date_end_day),
                 show = showEndDatePicker,
                 onDismiss = {  },
-            ) {
-                viewmodel.updateDateEndWorkDay(it)
+            ) {timestamp->
+                updateDateEndWorkDay(timestamp)
                 showEndDatePicker = false
             }
             RowTitleWithContent(
@@ -214,7 +219,7 @@ fun NewDayScreen(
                     modifier = Modifier.clickable {
                         showEndDatePicker = true
                     },
-                    text = endTimeWork.dateTime.toLocalDate().formattedSpanish()
+                    text = endTimeWork.toLocalDate().formattedSpanish()
                 )
             }
 
@@ -233,13 +238,13 @@ fun NewDayScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable { showEndTimePicker = true },
-                    hour = endTimeWork.dateTime.hour.withZero(),
-                    minute = endTimeWork.dateTime.minute.withZero()
+                    hour = endTimeWork.hour.withZero(),
+                    minute = endTimeWork.minute.withZero()
                 )
                 DialogTimePicker(
                     show = showEndTimePicker,
                     onclickAccept = {hour,minute ->
-                        viewmodel.updateTimeWorkEnd(hour = hour, minute = minute)
+                        updateTimeWorkEnd(hour, minute)
                         showEndTimePicker = false},
                     onDismiss = {showEndTimePicker = false}
                 )
@@ -257,7 +262,7 @@ fun NewDayScreen(
                 bottomSpacer = 10.dp
             ) {
                 Switch(checked = switchBreakWorkState, onCheckedChange = {
-                    viewmodel.changeBreakWorkState()
+                    changeBreakWorkState()
                     showStartBreakTimePicker = it
                 })
             }
@@ -267,7 +272,7 @@ fun NewDayScreen(
                 show = showStartBreakTimePicker,
                 onDismiss = {  }
             ) {startBreakHour, startBreakMinute, endBreakHour, endBreakMinute ->
-                viewmodel.setBreakWork(startBreakHour, startBreakMinute, endBreakHour, endBreakMinute)
+                setBreakWork(startBreakHour, startBreakMinute, endBreakHour, endBreakMinute)
                 showStartBreakTimePicker = false
             }
 
@@ -283,8 +288,8 @@ fun NewDayScreen(
             ){
                 WorkBreak(
 
-                    startBreakWorkTime = "${startBreakWork.dateTime.hour.withZero()}:${startBreakWork.dateTime.minute.withZero()}",
-                    endBreakWorkTime = "${endBreakWork.dateTime.hour.withZero()}:${endBreakWork.dateTime.minute.withZero()}"
+                    startBreakWorkTime = "${startBreakWork.hour.withZero()}:${startBreakWork.minute.withZero()}",
+                    endBreakWorkTime = "${endBreakWork.hour.withZero()}:${endBreakWork.minute.withZero()}"
                 )
                 BoxHourMedium(number = "0h")
             }

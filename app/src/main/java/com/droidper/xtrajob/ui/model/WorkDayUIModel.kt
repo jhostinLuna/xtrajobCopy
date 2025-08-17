@@ -1,12 +1,12 @@
 package com.droidper.xtrajob.ui.model
 
-import com.droidper.xtrajob.ui.timepicker.TimeUiModel
+import java.time.LocalDateTime
 
 data class WorkDayUIModel(
-    val startDayWorkTimeUiModel: TimeUiModel = TimeUiModel(),
-    val endDayWorkTimeUiModel: TimeUiModel = TimeUiModel(),
-    val startDayBreakTimeUiModel: TimeUiModel = TimeUiModel(),
-    val endDayBreakTimeUiModel: TimeUiModel = TimeUiModel(),
+    val startDayWorkTime: LocalDateTime = LocalDateTime.now().withHour(0).withMinute(0),
+    val endDayWorkTime: LocalDateTime = LocalDateTime.now().withHour(0).withMinute(0),
+    val startDayBreakTime: LocalDateTime = LocalDateTime.now().withHour(0).withMinute(0),
+    val endDayBreakTime: LocalDateTime = LocalDateTime.now().withHour(0).withMinute(0),
     val isBreak: Boolean = false,
     val observation: String = ""
 )

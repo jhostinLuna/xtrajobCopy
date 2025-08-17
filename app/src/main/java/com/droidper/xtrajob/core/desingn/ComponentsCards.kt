@@ -124,7 +124,6 @@ fun CardWorkingDay(
                     Icon(imageVector = Icons.Filled.PlayCircle, contentDescription = "Icon of play or start")
                 }
 
-
                 ColumnHourWithIcon(hours = hoursBrakingWork){
                     Icon(imageVector = Icons.Filled.PauseCircle, contentDescription = "Icon of pause")
                 }

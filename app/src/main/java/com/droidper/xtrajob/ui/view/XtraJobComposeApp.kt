@@ -2,8 +2,11 @@ package com.droidper.xtrajob.ui.view
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +17,7 @@ import com.droidper.xtrajob.ui.view.newworkday.NewDayScreen
 import com.droidper.xtrajob.ui.view.recorddays.RecordDaysScreen
 import com.droidper.xtrajob.ui.view.workcalendar.WorkCalendarScreen
 import com.droidper.xtrajob.ui.theme.AppTheme
+import com.droidper.xtrajob.ui.view.newworkday.NewDayScreenViewModel
 
 @Preview(
     device = Devices.PIXEL_4_XL,
@@ -30,8 +34,10 @@ fun HomeScreenPreview(){
 
 @Composable
 fun XtraJobComposeApp (
-    navHostController: NavHostController = rememberNavController()
+    navHostController: NavHostController = rememberNavController(),
+    newDayViewModel: NewDayScreenViewModel = hiltViewModel()
 ) {
+    val workDayUiState by newDayViewModel.workDayUiState.collectAsState()
     NavHost(
         navController = navHostController,
         startDestination = Screen.Home.route,
@@ -55,10 +61,22 @@ fun XtraJobComposeApp (
                 navToNewDay = { navHostController.navigate(Screen.NewDay.route) }
             )
         }
-        composable(route = Screen.NewDay.route) {
-            NewDayScreen(viewModelFactory = null) {
-
-            }
+        composable(
+            route = Screen.NewDay.route
+        ) {
+            NewDayScreen(
+                workDayUiState = workDayUiState,
+                changeBreakWorkState = { newDayViewModel.changeBreakWorkState() },
+                updateDateStartWorkDay = { newDayViewModel.updateDateStartWorkDay(it) },
+                updateDateEndWorkDay = { newDayViewModel.updateDateEndWorkDay(it) },
+                updateTimeWorkStart = { hour, minute -> newDayViewModel.updateTimeWorkStart(hour, minute) },
+                updateTimeWorkEnd = { hour, minute -> newDayViewModel.updateTimeWorkEnd(hour, minute) },
+                setBreakWork = { startHour, startMinute, endHour, endMinute ->
+                    newDayViewModel.setBreakWork(startHour, startMinute, endHour, endMinute)
+                },
+                saveNewWorkDay = { newDayViewModel.saveWorkDay() },
+                onPressBack = { navHostController.popBackStack() }
+            )
         }
     }
 }
