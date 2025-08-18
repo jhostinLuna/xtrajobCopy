@@ -32,7 +32,6 @@ import com.droidper.xtrajob.core.desingn.CardDayRecorded
 import com.droidper.xtrajob.core.desingn.HeaderListDaysRecorded
 import com.droidper.xtrajob.core.desingn.TopAppBarBasic
 import com.droidper.xtrajob.ui.theme.AppTheme
-import java.time.LocalDate
 
 @Preview(
     device = Devices.PIXEL_4_XL,
@@ -126,14 +125,11 @@ fun RecordDaysScreen(
                     CardDayRecorded(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        date = LocalDate.now(), hoursDay = listOf("6:00","16:00"),
-                        hoursBrakingWork = listOf("12:00","13:00"))
+                        )
                     CardDayRecorded(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        date = LocalDate.now(),
-                        hoursDay = listOf("6:00","16:00"),
-                        hoursBrakingWork = listOf("12:00","13:00"))
+                            .fillMaxWidth()
+                    )
                 }
             }
 

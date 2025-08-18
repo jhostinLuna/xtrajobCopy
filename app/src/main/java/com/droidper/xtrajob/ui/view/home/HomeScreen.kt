@@ -117,7 +117,12 @@ fun HomeScreen(
                     .padding(horizontal = 40.dp)
             ) {
                 items(items = listOf("")) {
-                    CardWorkingDay(hoursDay = listOf("08:00","16:00"), hoursBrakingWork = listOf("13:00","14:00"), day = "Miercoles") {
+                    CardWorkingDay(
+                        startDayWorkTime = "6:00",
+                        endDayWorkTime = "16:00",
+                        startDayBreakTime = "12:00",
+                        endDayBreakTime = "13:00",
+                        day = "Miercoles") {
 
                     }
                 }

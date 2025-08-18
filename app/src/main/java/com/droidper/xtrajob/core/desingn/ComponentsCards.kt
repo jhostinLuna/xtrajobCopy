@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidper.xtrajob.core.extensions.bottomBorder
+import com.droidper.xtrajob.core.extensions.formattedSpanish
 import com.droidper.xtrajob.ui.theme.AppTheme
 import java.time.LocalDate
 
@@ -62,8 +63,10 @@ fun CardsPreview() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CardWorkingDay(
-                hoursDay = listOf("6:00","16:00"),
-                hoursBrakingWork = listOf("12:00","13:00"),
+                startDayWorkTime = "6:00",
+                endDayWorkTime = "16:00",
+                startDayBreakTime = "12:00",
+                endDayBreakTime = "13:00",
                 day = "LUNES",
             ){
 
@@ -84,8 +87,8 @@ fun CardsPreview() {
             )
             Spacer(modifier = Modifier.height(4.dp))
             HeaderListDaysRecorded()
-            CardDayRecorded(date = LocalDate.now(), hoursDay = listOf("6:00","16:00"), hoursBrakingWork = listOf("12:00","13:00"))
-            CardDayRecorded(date = LocalDate.now(), hoursDay = listOf("6:00","16:00"), hoursBrakingWork = listOf("12:00","13:00"))
+            CardDayRecorded()
+            CardDayRecorded()
         }
 
     }
@@ -93,8 +96,10 @@ fun CardsPreview() {
 }
 @Composable
 fun CardWorkingDay(
-    hoursDay: List<String>,
-    hoursBrakingWork: List<String>,
+    startDayWorkTime: String,
+    endDayWorkTime: String,
+    startDayBreakTime: String,
+    endDayBreakTime: String,
     day: String,
     important: Boolean = false,
     onclick: () -> Unit
@@ -120,14 +125,21 @@ fun CardWorkingDay(
                     .fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                ColumnHourWithIcon(hours = listOf(hoursDay[0])){
+                ColumnHourWithIcon(
+                    startBreakWorkTime = startDayWorkTime,
+                ){
                     Icon(imageVector = Icons.Filled.PlayCircle, contentDescription = "Icon of play or start")
                 }
 
-                ColumnHourWithIcon(hours = hoursBrakingWork){
+                ColumnHourWithIcon(
+                    startBreakWorkTime = startDayBreakTime,
+                    endBreakWorkTime = endDayBreakTime
+                ){
                     Icon(imageVector = Icons.Filled.PauseCircle, contentDescription = "Icon of pause")
                 }
-                ColumnHourWithIcon(hours = listOf(hoursDay[1])) {
+                ColumnHourWithIcon(
+                    endBreakWorkTime = endDayWorkTime
+                ) {
                     Icon(imageVector = Icons.Filled.StopCircle, contentDescription = "Icon of stop")
                 }
 
@@ -145,7 +157,8 @@ fun CardWorkingDay(
 }
 @Composable
 fun ColumnHourWithIcon(
-    hours: List<String>,
+    startBreakWorkTime: String = "-",
+    endBreakWorkTime: String = "-",
     icon: @Composable () -> Unit
 ){
     Column(
@@ -159,7 +172,10 @@ fun ColumnHourWithIcon(
             content = icon,
             color = Color.White.copy(0f)
         )
-        WorkBreak()
+        WorkBreak(
+            startBreakWorkTime = startBreakWorkTime,
+            endBreakWorkTime = endBreakWorkTime
+        )
 
     }
 }
@@ -167,7 +183,8 @@ fun ColumnHourWithIcon(
 fun WorkBreak(
     modifier: Modifier = Modifier,
     startBreakWorkTime: String = "-",
-    endBreakWorkTime: String = "-") {
+    endBreakWorkTime: String = "-"
+) {
     Column(
         modifier = modifier
             .height(55.dp),
@@ -220,7 +237,7 @@ fun CardDayHoursMoney(
             ) {
                 IconDay(day = "D")
                 Text(
-                    text = "10/09/23",
+                    text = date.formattedSpanish(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodySmall,
@@ -381,9 +398,12 @@ fun CardMonth(
 @Composable
 fun CardDayRecorded(
     modifier: Modifier = Modifier,
-    date: LocalDate,
-    hoursDay: List<String>,
-    hoursBrakingWork: List<String>
+    month: String = "-",
+    day: String = "-",
+    starWorkTime: String = "-",
+    endWorkTime: String = "-",
+    startBreakWorkTime: String = "-",
+    endBreakWorkTime: String = "-",
 ) {
     Surface {
         Row(
@@ -396,7 +416,7 @@ fun CardDayRecorded(
             Text(
                 modifier = Modifier
                     .weight(15f),
-                text = "10",
+                text = month,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
                 textAlign = TextAlign.Center
@@ -405,12 +425,12 @@ fun CardDayRecorded(
                 modifier = Modifier.weight(15f),
                 contentAlignment = Alignment.Center
             ){
-                IconDay(day = "D")
+                IconDay(day = day)
             }
 
             Text(
                 modifier = Modifier.weight(33.3f),
-                text = hoursDay[0],
+                text = starWorkTime,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
                 textAlign = TextAlign.Center
@@ -418,11 +438,13 @@ fun CardDayRecorded(
             )
             WorkBreak(
                 modifier = Modifier
-                    .weight(33.3f)
+                    .weight(33.3f),
+                startBreakWorkTime = startBreakWorkTime,
+                endBreakWorkTime = endBreakWorkTime
             )
             Text(
                 modifier = Modifier.weight(33.3f),
-                text = hoursDay[1],
+                text = endWorkTime,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
                 textAlign = TextAlign.Center

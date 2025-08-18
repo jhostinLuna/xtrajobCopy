@@ -72,8 +72,10 @@ fun WorkCalendarScreen(
                     .height(30.dp)
             )
             CardWorkingDay(
-                hoursDay = listOf("6:00","16:00"),
-                hoursBrakingWork = listOf("12:00","13:00"),
+                startDayWorkTime = "6:00",
+                endDayWorkTime = "16:00",
+                startDayBreakTime = "12:00",
+                endDayBreakTime = "13:00",
                 day = "LUNES",
             ) {
                 

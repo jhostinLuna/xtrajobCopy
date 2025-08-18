@@ -8,8 +8,8 @@ import com.droidper.xtrajob.data.model.RecordDayEntity
 
 @Dao
 interface RecordDayDao {
-    @Query("SELECT * FROM record_day")
-    fun getAll(): List<RecordDayEntity>
+    //@Query("SELECT * FROM record_day")
+    //fun getAll(): List<RecordDayEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecordDay(record: RecordDayEntity): Long
