@@ -22,4 +22,7 @@
     <string name="init_breaktime">Inicio Descanso</string>
     <string name="fin_breaktime">Fin Descanso</string>
     <string name="select_breaktime">Selecciona hora de descanso</string>
+    <string name="select_time_of_rest">Selecciona el tiempo de descanso</string>
+    <string name="hours">Horas</string>
+    <string name="minutes">Minutos</string>
 </resources>

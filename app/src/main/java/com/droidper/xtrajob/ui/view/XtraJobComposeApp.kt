@@ -34,10 +34,8 @@ fun HomeScreenPreview(){
 
 @Composable
 fun XtraJobComposeApp (
-    navHostController: NavHostController = rememberNavController(),
-    newDayViewModel: NewDayScreenViewModel = hiltViewModel()
+    navHostController: NavHostController = rememberNavController()
 ) {
-    val workDayUiState by newDayViewModel.workDayUiState.collectAsState()
     NavHost(
         navController = navHostController,
         startDestination = Screen.Home.route,
@@ -64,17 +62,39 @@ fun XtraJobComposeApp (
         composable(
             route = Screen.NewDay.route
         ) {
+            val viewModel = hiltViewModel<NewDayScreenViewModel>()
+
+            val startWorkTimeUiState by viewModel.startWorkTimeUiState.collectAsState()
+            val endWorkTimeUiState by viewModel.endWorkTimeUiState.collectAsState()
+            val startBreakTimeUiState by viewModel.startBreakTimeUiState.collectAsState()
+            val endBreakTimeUiState by viewModel.endBreakTimeUiState.collectAsState()
+            val timeBreakWorkUiState by viewModel.timeBreakWorkUiState.collectAsState()
+            val isBreakWork by viewModel.isBreakWorkUiState.collectAsState()
+            val observationUiState by viewModel.observationUiState.collectAsState()
+            val saveWorkDayUiState by viewModel.saveWorkDayUiState.collectAsState()
+
             NewDayScreen(
-                workDayUiState = workDayUiState,
-                changeBreakWorkState = { newDayViewModel.changeBreakWorkState() },
-                updateDateStartWorkDay = { newDayViewModel.updateDateStartWorkDay(it) },
-                updateDateEndWorkDay = { newDayViewModel.updateDateEndWorkDay(it) },
-                updateTimeWorkStart = { hour, minute -> newDayViewModel.updateTimeWorkStart(hour, minute) },
-                updateTimeWorkEnd = { hour, minute -> newDayViewModel.updateTimeWorkEnd(hour, minute) },
-                setBreakWork = { startHour, startMinute, endHour, endMinute ->
-                    newDayViewModel.setBreakWork(startHour, startMinute, endHour, endMinute)
+                startDateTimeUiState = startWorkTimeUiState,
+                endDateTimeUiState = endWorkTimeUiState,
+                timeBreakWorkUiState = timeBreakWorkUiState,
+                updateTimeBreakWorkUiState = { time, isMinutes ->
+                    viewModel.updateTimeBreakWorkUiState(time, isMinutes)
+                                             },
+                startBreakDateTimeUiState = startBreakTimeUiState,
+                endBreakDateTimeUiState = endBreakTimeUiState,
+                switchBreakWork = isBreakWork,
+                observationUiState = observationUiState,
+                saveWorkDayUiState = saveWorkDayUiState,
+                changeBreakWorkState = { viewModel.changeBreakWorkState() },
+                updateDateStartWorkDay = { viewModel.updateDateStartWorkDay(it) },
+                updateDateEndWorkDay = { viewModel.updateDateEndWorkDay(it) },
+                updateTimeWorkStart = { hour, minute -> viewModel.updateStartWorkTime(hour, minute) },
+                updateTimeWorkEnd = { hour, minute -> viewModel.updateEndWorkTime(hour, minute) },
+                setBreakWork = { startHour, startMinute ->
+                    viewModel.updateStartBreakTimeUiState(startHour, startMinute)
                 },
-                saveNewWorkDay = { newDayViewModel.saveWorkDay() },
+                updateObservationUiState = {viewModel.updateObservationUiState(it)},
+                saveNewWorkDay = { viewModel.saveWorkDay() },
                 onPressBack = { navHostController.popBackStack() }
             )
         }

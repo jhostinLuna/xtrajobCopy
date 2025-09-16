@@ -5,6 +5,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +19,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -28,22 +32,26 @@ import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerFormatter
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,9 +61,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -66,10 +76,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.droidper.xtrajob.R
-import com.droidper.xtrajob.core.extensions.withZero
 import com.droidper.xtrajob.ui.theme.AppTheme
 import com.droidper.xtrajob.ui.theme.blueDE
-import com.droidper.xtrajob.ui.view.home.RowTitleWithContent
 
 
 @Preview(
@@ -296,11 +304,15 @@ fun BoxHour(number: String) {
 }
 
 @Composable
-fun BoxHourMedium(number: String){
+fun BoxHourMedium(
+    number: String,
+    onclick: () -> Unit = {}
+){
     Surface(
         modifier = Modifier
             .width(41.dp)
-            .height(45.dp),
+            .height(45.dp)
+            .clickable { onclick() },
         shape = RoundedCornerShape(4.dp),
         color = Color.Black.copy(0f),
         border = BorderStroke(2.dp, blueDE)
@@ -423,7 +435,7 @@ fun DatePickerDialog(
     onclickAccept: (dateMillisTimestamp: Long) -> Unit,
 ) {
     val datePickerState: DatePickerState = rememberDatePickerState()
-    val dateFormatter = remember{ DatePickerFormatter()}
+    val dateFormatter = remember{ DatePickerDefaults.dateFormatter()}
     if (show) {
         AlertDialog(
             onDismissRequest = {
@@ -462,121 +474,106 @@ fun DialogTimePickerPreview () {
         onDismiss = {}
     )
 }
+
 @Composable
-fun TimeBreakDialog(
+fun ChooseTimeBreakWork(
     show: Boolean = false,
-    onDismiss: () -> Unit,
-    onclickAccept: (startBreakHour: Int, startBreakMinute: Int, endBreakHour: Int, endBreakMinute: Int) -> Unit
+    onDismiss: () -> Unit = {},
+    onclickAccept: (time: Int, isMinutes: Boolean) -> Unit = {_,_ ->}
 ) {
-    var startBreakHour = 0
-    var startBreakMinute = 0
-    var endBreakHour = 0
-    var endBreakMinute = 0
-
-    if (show) {
-        AlertDialog(
-            onDismissRequest = {
-                onDismiss()
-            },
-            confirmButton = {
-                Button(onClick = {
-                    onclickAccept(startBreakHour, startBreakMinute, endBreakHour, endBreakMinute)
-                }) {
-                    Text(text = stringResource(id = R.string.acept))
-
-                }
-            },
-            dismissButton = {
-                onDismiss()
-            },
-            title = { Text(text = stringResource(id = R.string.select_breaktime))},
-            text = {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    RowTitleWithContent(
-                        title = stringResource(id = R.string.init_breaktime),
-                        topSpacer = 10.dp,
-                        bottomSpacer = 10.dp
-                    ) {
-
-                    }
-                    Surface(
-                        modifier = Modifier
-                            .width(262.dp)
-                            .height(100.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        color = MaterialTheme.colorScheme.inversePrimary,
-                        shadowElevation = 4.dp
-                    ) {
-                        var showStartTimePicker by remember {
-                            mutableStateOf(false)
-                        }
-                        RowHourMinute(
-                            modifier = Modifier
-                                .clickable { showStartTimePicker = true },
-                            hour = startBreakHour.withZero(),
-                            minute = startBreakMinute.withZero()
-                        )
-                        DialogTimePicker(
-                            show = showStartTimePicker,
-                            onclickAccept = {hour, minute ->
-                                startBreakHour = hour
-                                startBreakMinute = minute
-                                showStartTimePicker = false
-                            },
-                            onDismiss = {showStartTimePicker = false}
-                        )
-                    }
-                    RowTitleWithContent(
-                        title = stringResource(id = R.string.fin_breaktime),
-                        topSpacer = 10.dp,
-                        bottomSpacer = 10.dp
-                    ) {
-
-                    }
-                    Surface(
-                        modifier = Modifier
-                            .width(262.dp)
-                            .height(100.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        color = MaterialTheme.colorScheme.tertiaryContainer,
-                        shadowElevation = 4.dp
-                    ) {
-                        var showEndTimePicker by remember {
-                            mutableStateOf(false)
-                        }
-                        RowHourMinute(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clickable { showEndTimePicker = true },
-                            hour = endBreakHour.withZero(),
-                            minute = endBreakMinute.withZero()
-                        )
-                        DialogTimePicker(
-                            show = showEndTimePicker,
-                            onclickAccept = {hour,minute ->
-                                endBreakHour = hour
-                                endBreakMinute = minute
-                                showEndTimePicker = false},
-                            onDismiss = {showEndTimePicker = false}
-                        )
-
-                    }
-                }
+    var timeRest by remember { mutableIntStateOf(0) }
+    var isMinutes by remember { mutableStateOf(false) }
+    if (!show) return
+    AlertDialog(
+        onDismissRequest = {onDismiss()},
+        confirmButton = {
+            Button(
+                onClick = {
+                onclickAccept(timeRest, isMinutes)
+            }) {
+                Text(text = "Aceptar")
             }
-        )
-    }
-}
-@Preview
-@Composable
-fun PreviewTimeBreakDialog() {
-    TimeBreakDialog(
-        show = true,
-        onDismiss = {},
-        onclickAccept = { _, _, _, _ ->
 
+        },
+        title = { Text(text = stringResource(R.string.select_time_of_rest)) },
+        text = {
+            Row {
+                TextField(
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.width(50.dp),
+                    value = timeRest.toString(),
+                    onValueChange = {
+                        if (it.isBlank()) {
+                            timeRest = 0
+                            return@TextField
+                        }
+                        timeRest = it.toInt()
+                    }
+                )
+
+                val radioOptions = listOf(stringResource(R.string.hours), stringResource(R.string.minutes))
+                val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+                // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
+                Column(Modifier.selectableGroup()) {
+                    radioOptions.forEach { text ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .selectable(
+                                    selected = (text == selectedOption),
+                                    onClick = { onOptionSelected(text) },
+                                    role = Role.RadioButton
+                                )
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            val minutes = stringResource(R.string.minutes)
+                            isMinutes = selectedOption == minutes
+                            RadioButton(
+                                selected = (text == selectedOption),
+                                onClick = {
+                                    onOptionSelected(text)
+                                }
+                            )
+                            Text(
+                                text = text,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    }
+                }
+
+            }
         }
     )
+}
 
+@Composable
+fun LoadingOverlay() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            // Fondo semitransparente para simular una capa modal
+            .background(Color.Black.copy(alpha = 0.4f))
+            // Esto es CRUCIAL: Intercepta todos los clics y evita que pasen
+            .clickable(enabled = false) { },
+        contentAlignment = Alignment.Center
+    ) {
+        // El indicador de progreso de Material 3
+        CircularProgressIndicator()
+    }
+}
+
+@Preview(
+    device = Devices.PIXEL_3A
+)
+@Composable
+fun PreviewTimeBreakDialog() {
+    ChooseTimeBreakWork(
+        show = true,
+        onDismiss = {},
+        onclickAccept = {_, _ ->}
+    )
 }

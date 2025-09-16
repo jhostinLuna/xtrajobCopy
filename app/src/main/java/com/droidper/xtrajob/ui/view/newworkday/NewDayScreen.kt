@@ -39,14 +39,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidper.xtrajob.R
 import com.droidper.xtrajob.core.desingn.BoxHourMedium
+import com.droidper.xtrajob.core.desingn.ChooseTimeBreakWork
 import com.droidper.xtrajob.core.desingn.DatePickerDialog
 import com.droidper.xtrajob.core.desingn.DialogTimePicker
+import com.droidper.xtrajob.core.desingn.LoadingOverlay
 import com.droidper.xtrajob.core.desingn.RowHourMinute
-import com.droidper.xtrajob.core.desingn.TimeBreakDialog
 import com.droidper.xtrajob.core.desingn.TopAppBarBasic
 import com.droidper.xtrajob.core.desingn.WorkBreak
 import com.droidper.xtrajob.core.extensions.formattedSpanish
 import com.droidper.xtrajob.core.extensions.withZero
+import com.droidper.xtrajob.ui.model.DateTimeUiState
+import com.droidper.xtrajob.ui.model.SaveStatusUiState
+import com.droidper.xtrajob.ui.model.TimeBreakWorkUiState
 import com.droidper.xtrajob.ui.view.home.RowTitleWithContent
 import com.droidper.xtrajob.ui.theme.AppTheme
 
@@ -68,45 +72,32 @@ import com.droidper.xtrajob.ui.theme.AppTheme
 @Composable
 fun NewDayScreenPreview(){
     AppTheme {
-        NewDayScreen(
-            workDayUiState = WorkDayUiState(),
-            saveNewWorkDay = {},
-            onPressBack = {}
-        )
+        NewDayScreen()
     }
 
 }
 @Composable
 fun NewDayScreen(
-    workDayUiState: WorkDayUiState,
+    startDateTimeUiState: DateTimeUiState = DateTimeUiState(),
+    endDateTimeUiState: DateTimeUiState = DateTimeUiState(),
+    startBreakDateTimeUiState: DateTimeUiState = DateTimeUiState(),
+    timeBreakWorkUiState: TimeBreakWorkUiState = TimeBreakWorkUiState(),
+    updateTimeBreakWorkUiState: (Int, Boolean) -> Unit = {_,_ ->},
+    endBreakDateTimeUiState: DateTimeUiState = DateTimeUiState(),
+    switchBreakWork: Boolean = false,
+    observationUiState: String = "",
+    saveWorkDayUiState: SaveStatusUiState = SaveStatusUiState(),
     changeBreakWorkState: () -> Unit = {},
     updateDateStartWorkDay: (Long) -> Unit = {},
     updateDateEndWorkDay: (Long) -> Unit = {},
     updateTimeWorkStart: (Int, Int) -> Unit = { _,_ -> },
     updateTimeWorkEnd: (Int, Int) -> Unit = {_,_ ->},
-    setBreakWork: (Int, Int, Int, Int) -> Unit = {_,_,_,_ ->},
+    setBreakWork: (Int, Int) -> Unit = {_,_ ->},
+    updateObservationUiState: (String) -> Unit = {_ ->},
     saveNewWorkDay: () -> Unit = {},
     onPressBack: () -> Unit = {}
 ){
-    /*
-    val viewmodel = if (viewModelFactory != null) {
-        viewModel<NewDayScreenViewModel>(factory = viewModelFactory)
-    } else {
-        hiltViewModel()
-    }
 
-     */
-    val startTimeWork = workDayUiState.dayWorkDayUIModel.startDayWorkTime
-    val endTimeWork = workDayUiState.dayWorkDayUIModel.endDayWorkTime
-    val switchBreakWork = workDayUiState.dayWorkDayUIModel.isBreak
-    val startBreakWork = workDayUiState.dayWorkDayUIModel.startDayBreakTime
-    val endBreakWork = workDayUiState.dayWorkDayUIModel.endDayBreakTime
-
-    var switchBreakWorkState by remember {
-        mutableStateOf(false)
-    }
-
-    switchBreakWorkState = switchBreakWork
     Scaffold(
         topBar = {
             TopAppBarBasic(
@@ -117,7 +108,9 @@ fun NewDayScreen(
         floatingActionButton = {
             IconButton(onClick = {
             saveNewWorkDay()
-            }) {
+            },
+                enabled = !saveWorkDayUiState.isLoading
+            ) {
                 Surface(
                     modifier = Modifier,
                     shape = CircleShape,
@@ -156,16 +149,17 @@ fun NewDayScreen(
             RowTitleWithContent(
                 title = stringResource(id = R.string.newday_title1),
                 topSpacer = 10.dp,
-                bottomSpacer = 10.dp
-            ) {
-                Text(
-                    modifier = Modifier
-                        .clickable {
-                            showStartDatePicker = true
-                        },
-                    text = startTimeWork.toLocalDate().formattedSpanish()
-                )
-            }
+                bottomSpacer = 10.dp,
+                contentRight = {
+                    Text(
+                        modifier = Modifier
+                            .clickable {
+                                showStartDatePicker = true
+                            },
+                        text = startDateTimeUiState.dateTime.toLocalDate().formattedSpanish()
+                    )
+                }
+            )
             // Hora Inicio
 
             Surface(
@@ -183,8 +177,8 @@ fun NewDayScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable { showStartTimePicker = true },
-                    hour = startTimeWork.hour.withZero(),
-                    minute = startTimeWork.minute.withZero()
+                    hour = startDateTimeUiState.dateTime.hour.withZero(),
+                    minute = startDateTimeUiState.dateTime.minute.withZero()
                 )
                 DialogTimePicker(
                     show = showStartTimePicker,
@@ -219,7 +213,7 @@ fun NewDayScreen(
                     modifier = Modifier.clickable {
                         showEndDatePicker = true
                     },
-                    text = endTimeWork.toLocalDate().formattedSpanish()
+                    text = endDateTimeUiState.dateTime.toLocalDate().formattedSpanish()
                 )
             }
 
@@ -238,8 +232,8 @@ fun NewDayScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable { showEndTimePicker = true },
-                    hour = endTimeWork.hour.withZero(),
-                    minute = endTimeWork.minute.withZero()
+                    hour = endDateTimeUiState.dateTime.hour.withZero(),
+                    minute = endDateTimeUiState.dateTime.minute.withZero()
                 )
                 DialogTimePicker(
                     show = showEndTimePicker,
@@ -261,25 +255,21 @@ fun NewDayScreen(
                 topSpacer = 10.dp,
                 bottomSpacer = 10.dp
             ) {
-                Switch(checked = switchBreakWorkState, onCheckedChange = {
+                Switch(checked = switchBreakWork, onCheckedChange = {
                     changeBreakWorkState()
                     showStartBreakTimePicker = it
                 })
             }
 
-
-            TimeBreakDialog(
+            DialogTimePicker(
                 show = showStartBreakTimePicker,
-                onDismiss = {  }
-            ) {startBreakHour, startBreakMinute, endBreakHour, endBreakMinute ->
-                setBreakWork(startBreakHour, startBreakMinute, endBreakHour, endBreakMinute)
-                showStartBreakTimePicker = false
-            }
+                onDismiss = { },
+                onclickAccept = { hour, minute ->
+                    setBreakWork(hour, minute)
+                    showStartBreakTimePicker = false
+                },
+            )
 
-
-            var observationState by remember {
-                mutableStateOf("")
-            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -288,18 +278,33 @@ fun NewDayScreen(
             ){
                 WorkBreak(
 
-                    startBreakWorkTime = "${startBreakWork.hour.withZero()}:${startBreakWork.minute.withZero()}",
-                    endBreakWorkTime = "${endBreakWork.hour.withZero()}:${endBreakWork.minute.withZero()}"
+                    startBreakWorkTime = "${startBreakDateTimeUiState.dateTime.hour.withZero()}:${startBreakDateTimeUiState.dateTime.minute.withZero()}",
+                    endBreakWorkTime = "${endBreakDateTimeUiState.dateTime.hour.withZero()}:${endBreakDateTimeUiState.dateTime.minute.withZero()}"
                 )
-                BoxHourMedium(number = "0h")
+                var showTimeBreakWork by remember {
+                    mutableStateOf(false)
+                }
+                BoxHourMedium(
+                    number = timeBreakWorkUiState.timeBreakWork.toString(),
+                ) {
+                    showTimeBreakWork = true
+                }
+                ChooseTimeBreakWork(
+                    show = showTimeBreakWork,
+                    onDismiss = { showTimeBreakWork = false },
+                    onclickAccept = { time, isMinutes ->
+                        updateTimeBreakWorkUiState(time,isMinutes)
+                        showTimeBreakWork = false
+                    }
+                )
             }
             BasicTextField(
                 modifier = Modifier
                     .padding(horizontal = 40.dp)
                     .fillMaxWidth()
                     .height(136.dp),
-                value = observationState,
-                onValueChange = { if (it.length < 256) observationState = it},
+                value = observationUiState,
+                onValueChange = { if (it.length < 256) updateObservationUiState(it) },
                 maxLines = 5,
                 decorationBox = {
                     Surface(
@@ -309,18 +314,22 @@ fun NewDayScreen(
                         shape = RoundedCornerShape(4.dp),
                         shadowElevation = 4.dp
                     ) {
-                        if (observationState.isEmpty()) {
+                        if (observationUiState.isEmpty()) {
                             Text(
                                 text = stringResource(id = R.string.observations),
                                 color = Color.Gray
                             )
                         }else {
-                            Text(text = observationState)
+                            Text(text = observationUiState)
                         }
                         
                     }
                 }
             )
+        }
+
+        if (saveWorkDayUiState.isLoading) {
+            LoadingOverlay()
         }
     }
 

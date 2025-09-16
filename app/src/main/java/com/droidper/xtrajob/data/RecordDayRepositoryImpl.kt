@@ -22,7 +22,7 @@ class RecordDayRepositoryImpl @Inject constructor(
                 if (id != -1L) {
                     Resource.Success(id)
                 } else {
-                    Resource.Error(DomainFailure.AbortInsertDataBaseError)
+                    Resource.Error(CoreFailure.DatabaseError(code = -1, message = "Error al guardar el registro"))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
